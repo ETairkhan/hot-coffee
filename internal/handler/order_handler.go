@@ -27,6 +27,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.orderService.CreateOrder(&order); err != nil {
+
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -59,53 +60,53 @@ func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusOK, order)
 }
 
-func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
-	var order models.Order
-	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
+// func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
+// 	var order models.Order
+// 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+// 		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+// 		return
+// 	}
 
-	if err := h.orderService.UpdateOrder(&order); err != nil {
-		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	if err := h.orderService.UpdateOrder(&order); err != nil {
+// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	log.Println("Order updated", order.ID)
-	h.respondWithJSON(w, http.StatusOK, order)
-}
+// 	log.Println("Order updated", order.ID)
+// 	h.respondWithJSON(w, http.StatusOK, order)
+// }
 
-func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	if id == "" {
-		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
-		return
-	}
+// func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
+// 	id := r.URL.Query().Get("id")
+// 	if id == "" {
+// 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
+// 		return
+// 	}
 
-	if err := h.orderService.DeleteOrder(id); err != nil {
-		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	if err := h.orderService.DeleteOrder(id); err != nil {
+// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	log.Println("Order deleted", id)
-	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Order deleted successfully"})
-}
+// 	log.Println("Order deleted", id)
+// 	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Order deleted successfully"})
+// }
 
-func (h *OrderHandler) CloseOrder(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	if id == "" {
-		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
-		return
-	}
+// func (h *OrderHandler) CloseOrder(w http.ResponseWriter, r *http.Request) {
+// 	id := r.URL.Query().Get("id")
+// 	if id == "" {
+// 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
+// 		return
+// 	}
 
-	if err := h.orderService.CloseOrder(id); err != nil {
-		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
+// 	if err := h.orderService.CloseOrder(id); err != nil {
+// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+// 		return
+// 	}
 
-	log.Println("Order closed", id)
-	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Order closed successfully"})
-}
+// 	log.Println("Order closed", id)
+// 	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Order closed successfully"})
+// }
 
 func (h *OrderHandler) respondWithError(w http.ResponseWriter, code int, message string) {
 	w.WriteHeader(code)

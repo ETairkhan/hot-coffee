@@ -1,9 +1,9 @@
 package service
 
 import (
-	"errors"
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/models"
+	"errors"
 )
 
 // OrderService defines the service that manages orders
@@ -18,11 +18,11 @@ func NewOrderService(repo dal.Repository) *OrderService {
 
 // CreateOrder saves a new order
 func (s *OrderService) CreateOrder(order *models.Order) error {
-	return s.repo.SaveOrder(order)
+	return s.repo.CreateOrder(order)
 }
 
 // GetOrders retrieves all orders
-func (s *OrderService) GetOrders() ([]models.Order, error) {
+func (s *OrderService) GetOrders() (*[]models.Order, error) {
 	return s.repo.GetAllOrders()
 }
 
@@ -36,22 +36,22 @@ func (s *OrderService) GetOrderByID(id string) (*models.Order, error) {
 }
 
 // UpdateOrder modifies an existing order
-func (s *OrderService) UpdateOrder(order *models.Order) error {
-	return s.repo.UpdateOrder(order)
-}
+// func (s *OrderService) UpdateOrder(order *models.Order) error {
+// 	return s.repo.UpdateOrder(order)
+// }
 
-// DeleteOrder removes an order by its ID
-func (s *OrderService) DeleteOrder(id string) error {
-	return s.repo.DeleteOrder(id)
-}
+// // DeleteOrder removes an order by its ID
+// func (s *OrderService) DeleteOrder(id string) error {
+// 	return s.repo.DeleteOrder(id)
+// }
 
-// CloseOrder marks an order as "closed"
-func (s *OrderService) CloseOrder(id string) error {
-	order, err := s.repo.GetOrderByID(id)
-	if err != nil {
-		return errors.New("order not found")
-	}
+// // CloseOrder marks an order as "closed"
+// func (s *OrderService) CloseOrder(id string) error {
+// 	order, err := s.repo.GetOrderByID(id)
+// 	if err != nil {
+// 		return errors.New("order not found")
+// 	}
 
-	order.Status = "closed"
-	return s.repo.UpdateOrder(order)
-}
+// 	order.Status = "closed"
+// 	return s.repo.UpdateOrder(order)
+// }

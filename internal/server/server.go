@@ -41,7 +41,7 @@ func NewServer(port int, dir string) (*server, error) {
 // registerRoutes sets up HTTP routes for order handling
 func (s *server) registerRoutes() {
 	s.mux.HandleFunc("GET /orders", s.handler.GetOrders) // GET all orders
-	// s.mux.HandleFunc("POST /orders/create", s.handler.CreateOrder) // POST create order
+	s.mux.HandleFunc("POST /orders", s.handler.CreateOrder) // POST create order
 	// s.mux.HandleFunc("PUT/orders/update", s.handler.UpdateOrder) // PUT update order
 	// s.mux.HandleFunc("DELETE /orders/delete", s.handler.DeleteOrder) // DELETE delete order
 	// s.mux.HandleFunc("POST /orders/close", s.handler.CloseOrder)   // POST close order
