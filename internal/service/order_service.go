@@ -13,7 +13,6 @@ type OrderService struct {
 
 // NewOrderService creates a new instance of OrderService
 func NewOrderService(repo *dal.OrderRepository) *OrderService {
-
 	return &OrderService{OrderRepo: repo}
 }
 

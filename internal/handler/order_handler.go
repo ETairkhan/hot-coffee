@@ -33,6 +33,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusCreated, order)
 }
 
+// get all orders
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := h.orderService.GetOrders()
 	if err != nil {
@@ -42,8 +43,9 @@ func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusOK, orders)
 }
 
+// get order by id 
 func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	id := r.PathValue("id")
 	if id == "" {
 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
 		return
