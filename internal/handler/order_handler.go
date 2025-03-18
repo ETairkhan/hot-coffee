@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/service"
 	"encoding/json"
 	"net/http"
@@ -8,10 +9,12 @@ import (
 
 type OrderHandler struct {
 	orderService service.OrderService
+	repo         *dal.Repository
 }
 
-func NewOrderHandler(orderService service.OrderService) *OrderHandler {
-	return &OrderHandler{orderService: orderService}
+func NewOrderHandler(dir string, orderService service.OrderService) *OrderHandler {
+	repo := dal.NewRepository(dir)
+	return &OrderHandler{orderService: orderService, repo: repo}
 }
 
 // func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -30,14 +33,14 @@ func NewOrderHandler(orderService service.OrderService) *OrderHandler {
 // 	h.respondWithJSON(w, http.StatusCreated, order)
 // }
 
-// func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
-// 	orders, err := h.orderService.GetOrders()
-// 	if err != nil {
-// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-// 	h.respondWithJSON(w, http.StatusOK, orders)
-// }
+func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
+	orders, err := h.repo.GetAllOrders()
+	if err != nil {
+		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	h.respondWithJSON(w, http.StatusOK, orders)
+}
 
 // func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 // 	id := r.URL.Query().Get("id")

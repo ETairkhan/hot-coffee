@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ayzhunis/hot-coffee/internal/server"
 	"flag"
 	"fmt"
 )
@@ -18,6 +19,13 @@ func init() {
 func main() {
 	flag.Usage = Usage
 	flag.Parse()
+	s, err  := server.NewServer(port, dir)
+	if err != nil {
+		return
+	}
+	if err := s.Run(); err != nil {
+		return
+	}
 }
 
 func Usage() {
