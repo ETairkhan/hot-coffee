@@ -3,7 +3,9 @@ package handler
 import (
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/models"
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -17,24 +19,25 @@ func NewOrderHandler(dir string, orderService service.OrderService) *OrderHandle
 	return &OrderHandler{orderService: orderService, repo: repo}
 }
 
-// func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
-// 	var order models.Order
-// 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-// 		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-// 		return
-// 	}
+func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
+	var order models.Order
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
 
-// 	if err := h.orderService.CreateOrder(&order); err != nil {
-// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	if err := h.orderService.CreateOrder(&order); err != nil {
 
-// 	log.Println("Order created", order.ID)
-// 	h.respondWithJSON(w, http.StatusCreated, order)
-// }
+		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	log.Println("Order created", order.ID)
+	h.respondWithJSON(w, http.StatusCreated, order)
+}
 
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
-	orders, err := h.repo.GetAllOrders()
+	orders, err := h.orderService.GetOrders()
 	if err != nil {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -42,20 +45,20 @@ func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusOK, orders)
 }
 
-// func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
-// 	id := r.URL.Query().Get("id")
-// 	if id == "" {
-// 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
-// 		return
-// 	}
+func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
+		return
+	}
 
-// 	order, err := h.orderService.GetOrderByID(id)
-// 	if err != nil {
-// 		h.respondWithError(w, http.StatusNotFound, err.Error())
-// 		return
-// 	}
-// 	h.respondWithJSON(w, http.StatusOK, order)
-// }
+	order, err := h.orderService.GetOrderByID(id)
+	if err != nil {
+		h.respondWithError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	h.respondWithJSON(w, http.StatusOK, order)
+}
 
 // func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 // 	var order models.Order
