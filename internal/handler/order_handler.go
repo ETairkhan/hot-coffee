@@ -51,7 +51,7 @@ func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, err := h.repo.GetOrderByID(id)
+	order, err := h.orderService.GetOrderByID(id)
 	if err != nil {
 		h.respondWithError(w, http.StatusNotFound, err.Error())
 		return
