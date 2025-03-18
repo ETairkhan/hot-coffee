@@ -1,10 +1,13 @@
 package main
 
-import "flag"
+import (
+	"flag"
+	"fmt"
+)
 
 var (
 	port int
-	dir string
+	dir  string
 )
 
 func init() {
@@ -13,7 +16,20 @@ func init() {
 }
 
 func main() {
+	flag.Usage = Usage
 	flag.Parse()
-	
-	
+}
+
+func Usage() {
+	fmt.Println(`$ ./hot-coffee --help
+Coffee Shop Management System
+
+Usage:
+  hot-coffee [--port <N>] [--dir <S>] 
+  hot-coffee --help
+
+Options:
+  --help       Show this screen.
+  --port N     Port number.
+  --dir S      Path to the data directory.`)
 }
