@@ -35,6 +35,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusCreated, order)
 }
 
+// get all orders
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := h.repo.GetAllOrders()
 	if err != nil {
@@ -44,20 +45,21 @@ func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	h.respondWithJSON(w, http.StatusOK, orders)
 }
 
-// func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
-// 	id := r.URL.Query().Get("id")
-// 	if id == "" {
-// 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
-// 		return
-// 	}
+// get order by id 
+func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
+		return
+	}
 
-// 	order, err := h.orderService.GetOrderByID(id)
-// 	if err != nil {
-// 		h.respondWithError(w, http.StatusNotFound, err.Error())
-// 		return
-// 	}
-// 	h.respondWithJSON(w, http.StatusOK, order)
-// }
+	order, err := h.repo.GetOrderByID(id)
+	if err != nil {
+		h.respondWithError(w, http.StatusNotFound, err.Error())
+		return
+	}
+	h.respondWithJSON(w, http.StatusOK, order)
+}
 
 // func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 // 	var order models.Order
