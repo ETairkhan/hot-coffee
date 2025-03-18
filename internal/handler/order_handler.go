@@ -3,7 +3,9 @@ package handler
 import (
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/models"
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -17,21 +19,21 @@ func NewOrderHandler(dir string, orderService service.OrderService) *OrderHandle
 	return &OrderHandler{orderService: orderService, repo: repo}
 }
 
-// func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
-// 	var order models.Order
-// 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
-// 		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
-// 		return
-// 	}
+func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
+	var order models.Order
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
 
-// 	if err := h.orderService.CreateOrder(&order); err != nil {
-// 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	if err := h.repo.CreateOrder(&order); err != nil {
+		h.respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 
-// 	log.Println("Order created", order.ID)
-// 	h.respondWithJSON(w, http.StatusCreated, order)
-// }
+	log.Println("Order created", order.ID)
+	h.respondWithJSON(w, http.StatusCreated, order)
+}
 
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := h.repo.GetAllOrders()
