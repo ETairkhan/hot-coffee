@@ -8,27 +8,28 @@ import (
 
 // OrderService defines the service that manages orders
 type OrderService struct {
-	repo dal.Repository
+	OrderRepo *dal.OrderRepository
 }
 
 // NewOrderService creates a new instance of OrderService
-func NewOrderService(repo dal.Repository) *OrderService {
-	return &OrderService{repo: repo}
+func NewOrderService(repo *dal.OrderRepository) *OrderService {
+
+	return &OrderService{OrderRepo: repo}
 }
 
 // CreateOrder saves a new order
 func (s *OrderService) CreateOrder(order *models.Order) error {
-	return s.repo.CreateOrder(order)
+	return s.OrderRepo.CreateOrder(order)
 }
 
 // GetOrders retrieves all orders
 func (s *OrderService) GetOrders() (*[]models.Order, error) {
-	return s.repo.GetAllOrders()
+	return s.OrderRepo.GetAllOrders()
 }
 
 // GetOrderByID fetches a specific order by its ID
 func (s *OrderService) GetOrderByID(id string) (*models.Order, error) {
-	order, err := s.repo.GetOrderByID(id)
+	order, err := s.OrderRepo.GetOrderByID(id)
 	if err != nil {
 		return nil, errors.New("order not found")
 	}
