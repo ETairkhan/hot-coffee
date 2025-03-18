@@ -1,6 +1,7 @@
 package server
 
 import (
+	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/handler"
 	"ayzhunis/hot-coffee/internal/service"
 	"errors"
@@ -23,8 +24,9 @@ func NewServer(port int, dir string) (*server, error) {
 	if port <= 0 || port >= 63535 {
 		return nil, errors.New("invalid port")
 	}
-	serv := service.OrderService{}
-	handler := handler.NewOrderHandler(dir, serv)
+	orderRepository := dal.NewOrderRepository(dir)
+	serv := service.NewOrderService(orderRepository)
+	handler := handler.NewOrderHandler(serv)
 
 	s := server{
 		port:    port,

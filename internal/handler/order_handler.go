@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/service"
 	"ayzhunis/hot-coffee/models"
 	"encoding/json"
@@ -10,13 +9,11 @@ import (
 )
 
 type OrderHandler struct {
-	orderService service.OrderService
-	repo         *dal.Repository
+	orderService *service.OrderService
 }
 
-func NewOrderHandler(dir string, orderService service.OrderService) *OrderHandler {
-	repo := dal.NewRepository(dir)
-	return &OrderHandler{orderService: orderService, repo: repo}
+func NewOrderHandler(orderService *service.OrderService) *OrderHandler {
+	return &OrderHandler{orderService: orderService}
 }
 
 func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +23,8 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.repo.CreateOrder(&order); err != nil {
+	if err := h.orderService.CreateOrder(&order); err != nil {
+
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -37,7 +35,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 // get all orders
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
-	orders, err := h.repo.GetAllOrders()
+	orders, err := h.orderService.GetOrders()
 	if err != nil {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
