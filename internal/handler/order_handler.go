@@ -3,8 +3,9 @@ package handler
 import (
 	"ayzhunis/hot-coffee/internal/service"
 	"ayzhunis/hot-coffee/models"
+	"ayzhunis/hot-coffee/utils"
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 )
 
@@ -28,8 +29,7 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	log.Println("Order created", order.ID)
+	slog.Info("Order created", utils.PostGroup())
 	h.respondWithJSON(w, http.StatusCreated, order)
 }
 
@@ -40,10 +40,11 @@ func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	slog.Info("Orders received", utils.ReqGroup())
 	h.respondWithJSON(w, http.StatusOK, orders)
 }
 
-// get order by id 
+// get order by id
 func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
@@ -56,6 +57,7 @@ func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 		h.respondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
+	slog.Info("Order received by id", utils.ReqGroup())
 	h.respondWithJSON(w, http.StatusOK, order)
 }
 

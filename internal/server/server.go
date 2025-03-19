@@ -6,10 +6,11 @@ import (
 	"ayzhunis/hot-coffee/internal/service"
 	"errors"
 	"fmt"
+	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
-
-var ()
 
 type server struct {
 	port int
@@ -42,14 +43,22 @@ func NewServer(port int, dir string) (*server, error) {
 
 // registerRoutes sets up HTTP routes for order handling
 func (s *server) registerRoutes() {
-	s.mux.HandleFunc("GET /orders", s.handler.GetOrders) // GET all orders
+	s.mux.HandleFunc("GET /orders", s.handler.GetOrders)         // GET all orders
 	s.mux.HandleFunc("GET /orders/{id}", s.handler.GetOrderByID) // GET order by id
-	s.mux.HandleFunc("POST /orders", s.handler.CreateOrder) // POST create order
+	s.mux.HandleFunc("POST /orders", s.handler.CreateOrder)      // POST create order
 	// s.mux.HandleFunc("PUT/orders/update", s.handler.UpdateOrder) // PUT update order
 	// s.mux.HandleFunc("DELETE /orders/delete", s.handler.DeleteOrder) // DELETE delete order
 	// s.mux.HandleFunc("POST /orders/close", s.handler.CloseOrder)   // POST close order
 }
 
 func (s *server) Run() error {
+	handlerOpts := &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}
+	logger := slog.New(slog.NewTextHandler(os.Stderr, handlerOpts))
+	slog.SetDefault(logger)
+
+	log.Printf("Starting the server on %d...\n", s.port)
+	log.Printf("Data dir: %s", s.Dir)
 	return http.ListenAndServe(fmt.Sprintf(":%d", s.port), s.mux)
 }
