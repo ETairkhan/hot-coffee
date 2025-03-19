@@ -3,15 +3,12 @@ package dal
 import (
 	"ayzhunis/hot-coffee/models"
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"os"
 	"path"
 )
 
-var (
-	ordersFile = "orders.json"
-)
+var ordersFile = "orders.json"
 
 type OrderRepository struct {
 	dir string
@@ -26,7 +23,6 @@ func NewOrderRepository(dir string) *OrderRepository {
 // return all order which contains in data
 func (r *OrderRepository) GetAllOrders() (*[]models.Order, error) {
 	orders := make([]models.Order, 0)
-	fmt.Println(r.dir, orders)
 	f, err := os.ReadFile(path.Join(r.dir, ordersFile))
 	if err != nil {
 		return nil, err
