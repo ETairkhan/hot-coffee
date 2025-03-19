@@ -23,7 +23,16 @@ func (s *OrderService) CreateOrder(order *models.Order) error {
 
 // GetOrders retrieves all orders
 func (s *OrderService) GetOrders() (*[]models.Order, error) {
-	return s.OrderRepo.GetAllOrders()
+	items, err := s.OrderRepo.GetAllOrders()
+	if err != nil {
+		return nil, err
+	}
+
+	newItems := make([]models.Order, len(*items))
+	for i := range *items {
+		newItems[i] = *(*items)[i]
+	}
+	return &newItems, nil
 }
 
 // GetOrderByID fetches a specific order by its ID

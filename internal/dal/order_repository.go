@@ -33,7 +33,7 @@ func NewOrderRepository(dir string) *OrderRepository {
 
 // return all order which contains in data
 func (r *OrderRepository) GetAllOrders() (*[]*models.Order, error) {
-	return GetAllItems[models.Order](r.dir, ordersFile)
+	return GetAllItems[*models.Order](r.dir, ordersFile)
 }
 
 // return only one order with id

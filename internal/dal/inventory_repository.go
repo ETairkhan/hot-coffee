@@ -45,8 +45,8 @@ func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.Invento
 	return nil
 }
 
-func (ir *InventoryRepository) GetAllInventory() (*[]models.InventoryItem, error) {
-	return GetAllItems[models.InventoryItem](ir.dir, inventoryItemsFile)
+func (ir *InventoryRepository) GetAllInventory() (*[]*models.InventoryItem, error) {
+	return GetAllItems[*models.InventoryItem](ir.dir, inventoryItemsFile)
 }
 
 func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryItem, error) {

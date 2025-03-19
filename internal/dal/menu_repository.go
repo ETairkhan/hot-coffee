@@ -23,8 +23,8 @@ func NewMenuRepository(dir string) *MenuItemsRepository {
 	}
 }
 
-func (mr *MenuItemsRepository) GetAllMenuItems() (*[]models.MenuItem, error) {
-	return GetAllItems[models.MenuItem](mr.dir, menuItemsFile)
+func (mr *MenuItemsRepository) GetAllMenuItems() (*[]*models.MenuItem, error) {
+	return GetAllItems[*models.MenuItem](mr.dir, menuItemsFile)
 }
 
 func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, error) {

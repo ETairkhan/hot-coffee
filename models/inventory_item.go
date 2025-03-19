@@ -7,3 +7,6 @@ type InventoryItem struct {
 	Unit         string  `json:"unit"`
 }
 
+func (i *InventoryItem) GetID() string {
+	return i.IngredientID
+}
