@@ -12,3 +12,7 @@ type MenuItemIngredient struct {
 	IngredientID string  `json:"ingredient_id"`
 	Quantity     float64 `json:"quantity"`
 }
+
+func (m *MenuItem) GetID() string {
+	return m.ID
+}

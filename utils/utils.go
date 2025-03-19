@@ -1,6 +1,8 @@
 package utils
 
-import "log/slog"
+import (
+	"log/slog"
+)
 
 func ReqGroup() slog.Attr {
 	reqGroup := slog.Group(
