@@ -19,7 +19,16 @@ func (s *MenuService) CreateMenuItems(menu *models.MenuItem) error {
 }
 
 func (s *MenuService) GetAllMenu() (*[]models.MenuItem, error) {
-	return s.MenuRepo.GetAllMenuItems()
+	items, err := s.MenuRepo.GetAllMenuItems()
+	if err != nil {
+		return nil, err
+	}
+
+	newItems := make([]models.MenuItem, len(*items))
+	for i := range *items {
+		newItems[i] = *(*items)[i]
+	}
+	return &newItems, nil
 }
 
 func (s *MenuService) GetMenuItemByID(id string) (*models.MenuItem, error) {
