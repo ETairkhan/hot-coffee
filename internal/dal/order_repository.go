@@ -1,13 +1,12 @@
 package dal
 
 import (
+	"ayzhunis/hot-coffee/models"
 	"encoding/json"
 	"errors"
 	"io/fs"
 	"os"
 	"path"
-
-	"ayzhunis/hot-coffee/models"
 )
 
 const (
@@ -16,6 +15,7 @@ const (
 )
 
 var (
+	ErrClosedAlready  = errors.New("closed already")
 	ErrStatusClosed   = errors.New("status is closed to change")
 	ErrNotFound       = errors.New("not found")
 	ErrDuplicateFound = errors.New("duplicate id found")
@@ -183,6 +183,9 @@ func (r *OrderRepository) CloseOrder(id string) error {
 
 	for i := range orders {
 		if orders[i].ID == id {
+			if orders[i].Status == closed {
+				return ErrClosedAlready
+			}
 			orders[i].Status = closed
 			if found {
 				return ErrDuplicateFound

@@ -36,22 +36,16 @@ func (s *OrderService) GetOrderByID(id string) (*models.Order, error) {
 }
 
 // UpdateOrder modifies an existing order
-// func (s *OrderService) UpdateOrder(order *models.Order) error {
-// 	return s.repo.UpdateOrder(order)
-// }
+func (s *OrderService) UpdateOrder(order *models.Order) error {
+	return s.OrderRepo.UpdateOrder(order)
+}
 
-// // DeleteOrder removes an order by its ID
-// func (s *OrderService) DeleteOrder(id string) error {
-// 	return s.repo.DeleteOrder(id)
-// }
+// DeleteOrder removes an order by its ID
+func (s *OrderService) DeleteOrder(id string) error {
+	return s.OrderRepo.DeleteOrderById(id)
+}
 
-// // CloseOrder marks an order as "closed"
-// func (s *OrderService) CloseOrder(id string) error {
-// 	order, err := s.repo.GetOrderByID(id)
-// 	if err != nil {
-// 		return errors.New("order not found")
-// 	}
-
-// 	order.Status = "closed"
-// 	return s.repo.UpdateOrder(order)
-// }
+// CloseOrder marks an order as "closed"
+func (s *OrderService) CloseOrder(id string) error {
+	return s.OrderRepo.CloseOrder(id)
+}

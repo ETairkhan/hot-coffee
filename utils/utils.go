@@ -17,3 +17,19 @@ func PostGroup() slog.Attr {
 	)
 	return PostGroup
 }
+
+func PutGroup() slog.Attr {
+	PostGroup := slog.Group(
+		"request",
+		"method", "PUT",
+	)
+	return PostGroup
+}
+
+func DeleteGroup() slog.Attr {
+	PostGroup := slog.Group(
+		"request",
+		"method", "DELETE",
+	)
+	return PostGroup
+}
