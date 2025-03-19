@@ -1,9 +1,11 @@
 package main
 
 import (
-	"ayzhunis/hot-coffee/internal/server"
 	"flag"
 	"fmt"
+	"log/slog"
+
+	"ayzhunis/hot-coffee/internal/server"
 )
 
 var (
@@ -19,14 +21,14 @@ func init() {
 func main() {
 	flag.Usage = Usage
 	flag.Parse()
-	s, err  := server.NewServer(port, dir)
+	s, err := server.NewServer(port, dir)
 	if err != nil {
 		return
 	}
 	if err := s.Run(); err != nil {
+		slog.Error(err.Error())
 		return
 	}
-	
 }
 
 func Usage() {

@@ -39,7 +39,7 @@ func (mr *MenuItemsRepository) GetAllMenuItems() (*[]models.MenuItem, error) {
 
 func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, error) {
 	menuItems := make([]models.MenuItem, 0)
-	res := models.MenuItem{}
+	var res *models.MenuItem = nil 
 
 	f, err := os.ReadFile(path.Join(r.dir, menuItemsFile))
 	if err != nil {
@@ -52,10 +52,13 @@ func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, erro
 
 	for _, menuItem := range menuItems {
 		if menuItem.ID == id {
-			res = menuItem
+			res = &menuItem
 		}
 	}
-	return &res, nil
+	if res == nil {
+		return nil, ErrNotFound
+	}
+	return res, nil
 }
 
 // add menu to db if id duplicate error will return
