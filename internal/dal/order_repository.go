@@ -3,7 +3,6 @@ package dal
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"path"
@@ -35,7 +34,6 @@ func NewOrderRepository(dir string) *OrderRepository {
 // return all order which contains in data
 func (r *OrderRepository) GetAllOrders() (*[]models.Order, error) {
 	orders := make([]models.Order, 0)
-	fmt.Println(r.dir, orders)
 	f, err := os.ReadFile(path.Join(r.dir, ordersFile))
 	if err != nil {
 		return nil, err
@@ -81,6 +79,11 @@ func (r *OrderRepository) CreateOrder(order *models.Order) error {
 
 	if err = json.Unmarshal(f, &orders); err != nil {
 		return err
+	}
+	for _, o := range orders {
+		if o.ID == order.ID {
+			return ErrDuplicateFound
+		}
 	}
 	orders = append(orders, *order)
 
@@ -144,7 +147,7 @@ func (r *OrderRepository) DeleteOrderById(id string) error {
 
 	for i := range orders {
 		if orders[i].ID == id {
-			if index != -1 {
+			if index == -1 {
 				index = i
 			} else {
 				return ErrDuplicateFound
