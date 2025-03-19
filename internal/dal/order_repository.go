@@ -32,18 +32,8 @@ func NewOrderRepository(dir string) *OrderRepository {
 }
 
 // return all order which contains in data
-func (r *OrderRepository) GetAllOrders() (*[]models.Order, error) {
-	orders := make([]models.Order, 0)
-	f, err := os.ReadFile(path.Join(r.dir, ordersFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &orders); err != nil {
-		return nil, err
-	}
-
-	return &orders, nil
+func (r *OrderRepository) GetAllOrders() (*[]*models.Order, error) {
+	return GetAllItems[models.Order](r.dir, ordersFile)
 }
 
 // return only one order with id

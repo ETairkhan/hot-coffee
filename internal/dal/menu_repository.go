@@ -24,17 +24,7 @@ func NewMenuRepository(dir string) *MenuItemsRepository {
 }
 
 func (mr *MenuItemsRepository) GetAllMenuItems() (*[]models.MenuItem, error) {
-	menuItems := make([]models.MenuItem, 0)
-
-	f, err := os.ReadFile(path.Join(mr.dir, menuItemsFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &menuItems); err != nil {
-		return nil, err
-	}
-	return &menuItems, nil
+	return GetAllItems[models.MenuItem](mr.dir, menuItemsFile)
 }
 
 func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, error) {

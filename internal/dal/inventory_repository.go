@@ -46,22 +46,12 @@ func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.Invento
 }
 
 func (ir *InventoryRepository) GetAllInventory() (*[]models.InventoryItem, error) {
-	inventoryItems := make([]models.InventoryItem, 0)
-
-	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return nil, err
-	}
-	return &inventoryItems, nil
+	return GetAllItems[models.InventoryItem](ir.dir, inventoryItemsFile)
 }
 
 func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryItem, error) {
 	inventoryItems := make([]models.InventoryItem, 0)
-	var res *models.InventoryItem = nil 
+	var res *models.InventoryItem = nil
 
 	f, err := os.ReadFile(path.Join(ir.dir, menuItemsFile))
 	if err != nil {
@@ -139,7 +129,7 @@ func (ir *InventoryRepository) DeleteInventoryItem(id string) error {
 		return ErrNotFound
 	}
 	newMenuItems := append(invetoryItems[:index], invetoryItems[index+1:]...) // deleting element from array
-	data, err := json.MarshalIndent(&newMenuItems, "", "  ")    // create array of byte and contain spaces
+	data, err := json.MarshalIndent(&newMenuItems, "", "  ")                  // create array of byte and contain spaces
 	if err != nil {
 		return err
 	}

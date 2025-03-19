@@ -12,3 +12,7 @@ type OrderItem struct {
 	ProductID string `json:"product_id"`
 	Quantity  int    `json:"quantity"`
 }
+
+func (o *Order) GetID() string {
+	return o.ID
+}
