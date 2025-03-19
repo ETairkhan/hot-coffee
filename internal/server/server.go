@@ -50,12 +50,12 @@ func NewServer(port int, dir string) (*server, error) {
 
 // registerRoutes sets up HTTP routes for order handling
 func (s *server) registerRoutes() {
-	s.mux.HandleFunc("POST /orders", s.orderHandler.CreateOrder)      // POST create order
-	s.mux.HandleFunc("GET /orders", s.orderHandler.GetOrders)         // GET all orders
-	s.mux.HandleFunc("GET /orders/{id}", s.orderHandler.GetOrderByID) // GET order by id
-	s.mux.HandleFunc("PUT /orders/{id}", s.orderHandler.UpdateOrder) // PUT update order
-	s.mux.HandleFunc("DELETE /orders/{id}", s.orderHandler.DeleteOrder) // DELETE delete order
-	s.mux.HandleFunc("POST /orders/{id}/close", s.orderHandler.CloseOrder)   // POST close order
+	s.mux.HandleFunc("POST /orders", s.orderHandler.CreateOrder)     
+	s.mux.HandleFunc("GET /orders", s.orderHandler.GetOrders)      
+	s.mux.HandleFunc("GET /orders/{id}", s.orderHandler.GetOrderByID) 
+	s.mux.HandleFunc("PUT /orders/{id}", s.orderHandler.UpdateOrder) 
+	s.mux.HandleFunc("DELETE /orders/{id}", s.orderHandler.DeleteOrder) 
+	s.mux.HandleFunc("POST /orders/{id}/close", s.orderHandler.CloseOrder)  
 
 	s.mux.HandleFunc("POST /menu", s.menuHandler.CreateMenu)
 	s.mux.HandleFunc("GET /menu", s.menuHandler.GetAllMenuItems)
