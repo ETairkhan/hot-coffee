@@ -16,7 +16,8 @@ type server struct {
 	port int
 	Dir  string
 
-	handler *handler.OrderHandler
+	orderHandler *handler.OrderHandler
+	menuHandler *handler.MenuHandler
 
 	mux *http.ServeMux
 }
@@ -26,14 +27,20 @@ func NewServer(port int, dir string) (*server, error) {
 		return nil, errors.New("invalid port")
 	}
 	orderRepository := dal.NewOrderRepository(dir)
-	serv := service.NewOrderService(orderRepository)
-	handler := handler.NewOrderHandler(serv)
+	menuRepository := dal.NewMenuRepository(dir)
+
+	orderServ := service.NewOrderService(orderRepository)
+	menuServ := service.NewMenuService(menuRepository)
+
+	orderHandler := handler.NewOrderHandler(orderServ)
+	menuHandler := handler.NewMenuHandler(menuServ)
 
 	s := server{
 		port:    port,
 		Dir:     dir,
 		mux:     http.NewServeMux(),
-		handler: handler,
+		orderHandler: orderHandler,
+		menuHandler: menuHandler,
 	}
 
 	s.registerRoutes()
@@ -43,12 +50,18 @@ func NewServer(port int, dir string) (*server, error) {
 
 // registerRoutes sets up HTTP routes for order handling
 func (s *server) registerRoutes() {
-	s.mux.HandleFunc("POST /orders", s.handler.CreateOrder)      // POST create order
-	s.mux.HandleFunc("GET /orders", s.handler.GetOrders)         // GET all orders
-	s.mux.HandleFunc("GET /orders/{id}", s.handler.GetOrderByID) // GET order by id
-	s.mux.HandleFunc("PUT /orders/{id}", s.handler.UpdateOrder) // PUT update order
-	s.mux.HandleFunc("DELETE /orders/{id}", s.handler.DeleteOrder) // DELETE delete order
-	s.mux.HandleFunc("POST /orders/{id}/close", s.handler.CloseOrder)   // POST close order
+	s.mux.HandleFunc("POST /orders", s.orderHandler.CreateOrder)      // POST create order
+	s.mux.HandleFunc("GET /orders", s.orderHandler.GetOrders)         // GET all orders
+	s.mux.HandleFunc("GET /orders/{id}", s.orderHandler.GetOrderByID) // GET order by id
+	s.mux.HandleFunc("PUT /orders/{id}", s.orderHandler.UpdateOrder) // PUT update order
+	s.mux.HandleFunc("DELETE /orders/{id}", s.orderHandler.DeleteOrder) // DELETE delete order
+	s.mux.HandleFunc("POST /orders/{id}/close", s.orderHandler.CloseOrder)   // POST close order
+
+	s.mux.HandleFunc("POST /menu", s.menuHandler.CreateMenu)
+	s.mux.HandleFunc("GET /menu", s.menuHandler.GetAllMenuItems)
+	s.mux.HandleFunc("GET /menu/{id}", s.menuHandler.GetMenuItemByID)
+	s.mux.HandleFunc("PUT /menu/{id}", s.menuHandler.UpdateMenuItem)
+	s.mux.HandleFunc("DELETE /menu/{id}", s.menuHandler.DeleteMenuItemById)
 }
 
 func (s *server) Run() error {
