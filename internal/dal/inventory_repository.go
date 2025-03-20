@@ -56,58 +56,15 @@ func (ir *InventoryRepository) GetAllInventory() (*[]*models.InventoryItem, erro
 }
 
 func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryItem, error) {
-	inventoryItems := make([]models.InventoryItem, 0)
-	var res *models.InventoryItem = nil
+	return GetById[*models.InventoryItem](ir.dir, inventoryItemsFile, id)
+}
 
-	f, err := os.ReadFile(path.Join(ir.dir, menuItemsFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return nil, err
-	}
-
-	for _, inventoryItem := range inventoryItems {
-		if inventoryItem.IngredientID == id {
-			res = &inventoryItem
-		}
-	}
-	if res == nil {
-		return nil, ErrNotFound
-	}
-	return res, nil
+func (ir *InventoryRepository) CreateInventoryItem(item *models.InventoryItem) error {
+	return CreateItem(ir.dir, inventoryItemsFile, item)
 }
 
 func (ir *InventoryRepository) UpdateInventoryItem(item *models.InventoryItem) error {
-	inventoryItems := make([]models.InventoryItem, 0)
-
-	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
-	if err != nil {
-		return err
-	}
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return err
-	}
-	found := false // to check if the id exist
-	for i, ord := range inventoryItems {
-		if item.IngredientID == ord.IngredientID {
-			inventoryItems[i] = *item
-			found = true
-		}
-	}
-	if !found {
-		return ErrNotFound
-	}
-	data, err := json.MarshalIndent(&inventoryItems, "", "  ") // create array of byte and contain spaces
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path.Join(ir.dir, inventoryItemsFile), data, fs.FileMode(os.O_TRUNC))
-	if err != nil {
-		return err
-	}
-	return nil
+	return UpdateItem(ir.dir, inventoryItemsFile, item)
 }
 
 func (ir *InventoryRepository) DeleteInventoryItem(id string) error {

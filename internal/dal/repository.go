@@ -3,6 +3,7 @@ package dal
 import (
 	"encoding/json"
 	"errors"
+	"io/fs"
 	"os"
 	"path"
 
@@ -29,7 +30,7 @@ func GetAllItems[T models.Entity](dir, filename string) (*[]T, error) {
 	return &items, nil
 }
 
-func GetById[T models.Entity](dir, filename string, id string) (T, error) {
+func GetById[T models.Entity](dir, filename, id string) (T, error) {
 	var res T
 	items, err := GetAllItems[T](dir, filename)
 	if err != nil {
@@ -50,4 +51,56 @@ func GetById[T models.Entity](dir, filename string, id string) (T, error) {
 		return res, ErrNotFound
 	}
 	return res, nil
+}
+
+func CreateItem[T models.Entity](dir, filename string, item T) error {
+	items, err := GetAllItems[T](dir, filename)
+	if err != nil {
+		return err
+	}
+
+	for i := range *items {
+		if (*items)[i].GetID() == item.GetID() {
+			return ErrDuplicateFound
+		}
+	}
+
+	*items = append(*items, item)
+
+	return writeItems(dir, filename, items)
+}
+
+func UpdateItem[T models.Entity](dir, filename string, item T) error {
+	items, err := GetAllItems[T](dir, filename)
+	if err != nil {
+		return err
+	}
+	found := true
+	for i := range *items {
+		if (*items)[i].GetID() == item.GetID() {
+			(*items)[i] = item
+			if found {
+				return ErrDuplicateFound
+			}
+			found = true
+		}
+	}
+
+	if !found {
+		return ErrNotFound
+	}
+
+	return writeItems(dir, filename, items)
+} 
+
+func writeItems[T models.Entity](dir, filename string, items *[]T) error {
+	data, err := json.MarshalIndent(items, "", "  ")
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(path.Join(dir, filename), data, fs.FileMode(os.O_TRUNC))
+	if err != nil {
+		return err
+	}
+	return nil
 }
