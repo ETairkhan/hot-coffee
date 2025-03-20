@@ -67,7 +67,33 @@ func CreateItem[T models.Entity](dir, filename string, item T) error {
 
 	*items = append(*items, item)
 
-	// write data
+	return writeItems(dir, filename, items)
+}
+
+func UpdateItem[T models.Entity](dir, filename string, item T) error {
+	items, err := GetAllItems[T](dir, filename)
+	if err != nil {
+		return err
+	}
+	found := true
+	for i := range *items {
+		if (*items)[i].GetID() == item.GetID() {
+			(*items)[i] = item
+			if found {
+				return ErrDuplicateFound
+			}
+			found = true
+		}
+	}
+
+	if !found {
+		return ErrNotFound
+	}
+
+	return writeItems(dir, filename, items)
+} 
+
+func writeItems[T models.Entity](dir, filename string, items *[]T) error {
 	data, err := json.MarshalIndent(items, "", "  ")
 	if err != nil {
 		return err

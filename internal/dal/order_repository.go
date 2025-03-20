@@ -36,7 +36,7 @@ func (r *OrderRepository) GetOrderByID(id string) (*models.Order, error) {
 
 // create order by model
 func (r *OrderRepository) CreateOrder(order *models.Order) error {
-	return CreateItem[*models.Order](r.dir, ordersFile, order)
+	return CreateItem(r.dir, ordersFile, order)
 }
 
 func (r *OrderRepository) UpdateOrder(order *models.Order) error {

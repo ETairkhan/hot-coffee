@@ -23,65 +23,12 @@ func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryIte
 	return GetById[*models.InventoryItem](ir.dir, inventoryItemsFile, id)
 }
 
-func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.InventoryItem) error {
-	inventoryItems := make([]models.InventoryItem, 0)
-	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
-	if err != nil {
-		return err
-	}
-
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return err
-	}
-
-	for _, item1 := range inventoryItems {
-		if item1.IngredientID == inventoryItem.IngredientID {
-			return ErrDuplicateFound
-		}
-	}
-
-	inventoryItems = append(inventoryItems, *inventoryItem)
-
-	data, err := json.MarshalIndent(&inventoryItems, "", "  ") // create array of byte and contain with spaces
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path.Join(ir.dir, inventoryItemsFile), data, fs.FileMode(os.O_TRUNC))
-	if err != nil {
-		return err
-	}
-	return nil
+func (ir *InventoryRepository) CreateInventoryItem(item *models.InventoryItem) error {
+	return CreateItem(ir.dir, inventoryItemsFile, item)
 }
 
 func (ir *InventoryRepository) UpdateInventoryItem(item *models.InventoryItem) error {
-	inventoryItems := make([]models.InventoryItem, 0)
-
-	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
-	if err != nil {
-		return err
-	}
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return err
-	}
-	found := false // to check if the id exist
-	for i, ord := range inventoryItems {
-		if item.IngredientID == ord.IngredientID {
-			inventoryItems[i] = *item
-			found = true
-		}
-	}
-	if !found {
-		return ErrNotFound
-	}
-	data, err := json.MarshalIndent(&inventoryItems, "", "  ") // create array of byte and contain spaces
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path.Join(ir.dir, inventoryItemsFile), data, fs.FileMode(os.O_TRUNC))
-	if err != nil {
-		return err
-	}
-	return nil
+	return UpdateItem(ir.dir, inventoryItemsFile, item)
 }
 
 func (ir *InventoryRepository) DeleteInventoryItem(id string) error {
