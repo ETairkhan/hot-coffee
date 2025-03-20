@@ -81,6 +81,7 @@ func (s *server) registerRoutes() {
 	s.mux.HandleFunc("DELETE /inventory/{id}", s.inventoryHandler.DeleteInventoryItem)
 
 	s.mux.HandleFunc("GET /reports/total-sales", s.aggregationHandler.TotalSales)
+	s.mux.HandleFunc("GET /reports/popular-items", s.aggregationHandler.PopularItems)
 }
 
 func (s *server) Run() error {

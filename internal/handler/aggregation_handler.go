@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/models"
 	"ayzhunis/hot-coffee/utils"
 )
 
@@ -23,6 +24,17 @@ func (a *AggregationHandler) TotalSales(w http.ResponseWriter, r *http.Request) 
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	slog.Info("total salse", utils.PostGroup())
-	utils.RespondWithJSON(w, http.StatusCreated, map[string]uint64{"total sales": total})
+	slog.Info("total salse", utils.ReqGroup())
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]float64{"total sales": total})
+}
+
+func (a *AggregationHandler) PopularItems(w http.ResponseWriter, r *http.Request) {
+	item, err := a.aggregationService.PopularItems()
+	if err != nil {
+		slog.Error(err.Error())
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	slog.Info("popular items", utils.ReqGroup())
+	utils.RespondWithJSON(w, http.StatusCreated, map[string]models.MenuItem{"popular item": *item})
 }
