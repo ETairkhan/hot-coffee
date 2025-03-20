@@ -15,6 +15,14 @@ type InventoryRepository struct {
 	dir string
 }
 
+func (ir *InventoryRepository) GetAllInventory() (*[]*models.InventoryItem, error) {
+	return GetAllItems[*models.InventoryItem](ir.dir, inventoryItemsFile)
+}
+
+func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryItem, error) {
+	return GetById[*models.InventoryItem](ir.dir, inventoryItemsFile, id)
+}
+
 func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.InventoryItem) error {
 	inventoryItems := make([]models.InventoryItem, 0)
 	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
@@ -43,34 +51,6 @@ func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.Invento
 		return err
 	}
 	return nil
-}
-
-func (ir *InventoryRepository) GetAllInventory() (*[]*models.InventoryItem, error) {
-	return GetAllItems[*models.InventoryItem](ir.dir, inventoryItemsFile)
-}
-
-func (ir *InventoryRepository) GetInventoryById(id string) (*models.InventoryItem, error) {
-	inventoryItems := make([]models.InventoryItem, 0)
-	var res *models.InventoryItem = nil
-
-	f, err := os.ReadFile(path.Join(ir.dir, menuItemsFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &inventoryItems); err != nil {
-		return nil, err
-	}
-
-	for _, inventoryItem := range inventoryItems {
-		if inventoryItem.IngredientID == id {
-			res = &inventoryItem
-		}
-	}
-	if res == nil {
-		return nil, ErrNotFound
-	}
-	return res, nil
 }
 
 func (ir *InventoryRepository) UpdateInventoryItem(item *models.InventoryItem) error {

@@ -31,37 +31,12 @@ func (r *OrderRepository) GetAllOrders() (*[]*models.Order, error) {
 
 // return only one order with id
 func (r *OrderRepository) GetOrderByID(id string) (*models.Order, error) {
-	return GetByID[models.Order](r.dir, ordersFile, id)
+	return GetById[*models.Order](r.dir, ordersFile, id)
 }
 
 // create order by model
 func (r *OrderRepository) CreateOrder(order *models.Order) error {
-	orders := make([]models.Order, 0)
-
-	f, err := os.ReadFile(path.Join(r.dir, ordersFile))
-	if err != nil {
-		return err
-	}
-
-	if err = json.Unmarshal(f, &orders); err != nil {
-		return err
-	}
-	for _, o := range orders {
-		if o.ID == order.ID {
-			return ErrDuplicateFound
-		}
-	}
-	orders = append(orders, *order)
-
-	data, err := json.MarshalIndent(&orders, "", "  ") // create array of byte and contain with spaces
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path.Join(r.dir, ordersFile), data, fs.FileMode(os.O_TRUNC))
-	if err != nil {
-		return err
-	}
-	return nil
+	return CreateItem[*models.Order](r.dir, ordersFile, order)
 }
 
 func (r *OrderRepository) UpdateOrder(order *models.Order) error {

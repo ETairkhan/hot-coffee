@@ -28,7 +28,7 @@ func (mr *MenuItemsRepository) GetAllMenuItems() (*[]*models.MenuItem, error) {
 }
 
 func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, error) {
-	return GetById[models.MenuItem](r.dir, men)
+	return GetById[*models.MenuItem](r.dir, menuItemsFile, id)
 }
 
 // add menu to db if id duplicate error will return
