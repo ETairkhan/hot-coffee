@@ -15,7 +15,7 @@ func NewInventoryService(repo *dal.InventoryRepository) *InventoryService {
 }
 
 func (s *InventoryService) CreateInventoryItems(menu *models.InventoryItem) error {
-	return s.InvenRepo.CreateInventoryItems(menu)
+	return s.InvenRepo.CreateInventoryItem(menu)
 }
 
 func (s *InventoryService) GetAllInventory() (*[]models.InventoryItem, error) {

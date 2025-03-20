@@ -93,6 +93,30 @@ func UpdateItem[T models.Entity](dir, filename string, item T) error {
 	return writeItems(dir, filename, items)
 } 
 
+func DeleteItem[T models.Entity](dir, filename, id string) error {
+	items, err := GetAllItems[T](dir, filename)
+	if err != nil {
+		return err
+	}
+	index := -1
+
+	for i := range *items {
+		if (*items)[i].GetID() == id {
+			if index == -1 {
+				index = i
+			} else {
+				return ErrDuplicateFound
+			}
+		}
+	}
+	if index < 0 {
+		return ErrNotFound
+	}
+	newItems := append((*items)[:index], (*items)[index+1:]...) // deleting element from array
+
+	return writeItems(dir, filename, &newItems)
+}
+
 func writeItems[T models.Entity](dir, filename string, items *[]T) error {
 	data, err := json.MarshalIndent(items, "", "  ")
 	if err != nil {
