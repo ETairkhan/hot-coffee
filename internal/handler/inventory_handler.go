@@ -30,7 +30,7 @@ func (h *InventoryHandler) CreateInventoryItems(w http.ResponseWriter, r *http.R
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	slog.Info("Menu created", utils.PostGroup())
+	slog.Info("Inventory created", utils.PostGroup())
 	h.respondWithJSON(w, http.StatusCreated, inv)
 }
 
@@ -41,7 +41,7 @@ func (h *InventoryHandler) GetAllInventory(w http.ResponseWriter, r *http.Reques
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	slog.Info("Menu items received", utils.ReqGroup())
+	slog.Info("Inventory items received", utils.ReqGroup())
 	h.respondWithJSON(w, http.StatusOK, invenItems)
 }
 
@@ -58,11 +58,11 @@ func (h *InventoryHandler) GetInventoryById(w http.ResponseWriter, r *http.Reque
 		h.respondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	slog.Info("Menu received by id", utils.ReqGroup())
+	slog.Info("Inventory received by id", utils.ReqGroup())
 	h.respondWithJSON(w, http.StatusOK, invenItems)
 }
 
-func (h *InventoryHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
+func (h *InventoryHandler) UpdateInventoryItem(w http.ResponseWriter, r *http.Request) {
 	var inv models.InventoryItem
 	if err := json.NewDecoder(r.Body).Decode(&inv); err != nil {
 		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -74,7 +74,7 @@ func (h *InventoryHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	slog.Info("Menu updated", utils.PutGroup())
+	slog.Info("Inventory updated", utils.PutGroup())
 	h.respondWithJSON(w, http.StatusOK, inv)
 }
 
@@ -90,8 +90,8 @@ func (h *InventoryHandler) DeleteInventoryItem(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	slog.Info("Menu deleted", utils.DeleteGroup())
-	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Menu deleted successfully"})
+	slog.Info("Inventory deleted", utils.DeleteGroup())
+	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Inventory deleted successfully"})
 }
 
 func (h *InventoryHandler) respondWithError(w http.ResponseWriter, code int, message string) {
