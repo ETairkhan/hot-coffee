@@ -75,7 +75,7 @@ func UpdateItem[T models.Entity](dir, filename string, item T) error {
 	if err != nil {
 		return err
 	}
-	found := true
+	found := false
 	for i := range *items {
 		if (*items)[i].GetID() == item.GetID() {
 			(*items)[i] = item

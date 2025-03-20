@@ -75,7 +75,7 @@ func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	slog.Info("Order updated", utils.PutGroup())
-	h.respondWithJSON(w, http.StatusOK, order)
+	h.respondWithJSON(w, http.StatusOK, map[string]string{"message":"updated successfully"})
 }
 
 func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
