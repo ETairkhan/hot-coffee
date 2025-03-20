@@ -1,24 +1,17 @@
 package dal
 
 import (
-	"ayzhunis/hot-coffee/models"
 	"encoding/json"
-	"errors"
 	"io/fs"
 	"os"
 	"path"
+
+	"ayzhunis/hot-coffee/models"
 )
 
 const (
 	closed     = "closed"
 	ordersFile = "orders.json"
-)
-
-var (
-	ErrClosedAlready  = errors.New("closed already")
-	ErrStatusClosed   = errors.New("status is closed to change")
-	ErrNotFound       = errors.New("not found")
-	ErrDuplicateFound = errors.New("duplicate id found")
 )
 
 type OrderRepository struct {
@@ -38,24 +31,7 @@ func (r *OrderRepository) GetAllOrders() (*[]*models.Order, error) {
 
 // return only one order with id
 func (r *OrderRepository) GetOrderByID(id string) (*models.Order, error) {
-	orders := make([]models.Order, 0)
-	res := models.Order{}
-
-	f, err := os.ReadFile(path.Join(r.dir, ordersFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &orders); err != nil {
-		return nil, err
-	}
-
-	for _, order := range orders {
-		if order.ID == id {
-			res = order
-		}
-	}
-	return &res, nil
+	return GetByID[models.Order](r.dir, ordersFile, id)
 }
 
 // create order by model

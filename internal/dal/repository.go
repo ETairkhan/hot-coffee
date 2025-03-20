@@ -1,12 +1,20 @@
 package dal
 
 import (
-	"ayzhunis/hot-coffee/models"
 	"encoding/json"
+	"errors"
 	"os"
 	"path"
+
+	"ayzhunis/hot-coffee/models"
 )
 
+var (
+	ErrClosedAlready  = errors.New("closed already")
+	ErrStatusClosed   = errors.New("status is closed to change")
+	ErrNotFound       = errors.New("not found")
+	ErrDuplicateFound = errors.New("duplicate id found")
+)
 
 func GetAllItems[T models.Entity](dir, filename string) (*[]T, error) {
 	var items []T
@@ -18,6 +26,28 @@ func GetAllItems[T models.Entity](dir, filename string) (*[]T, error) {
 		return nil, err
 	}
 
-	
 	return &items, nil
+}
+
+func GetById[T models.Entity](dir, filename string, id string) (T, error) {
+	var res T
+	items, err := GetAllItems[T](dir, filename)
+	if err != nil {
+		return res, err
+	}
+	found := false
+	for _, item := range *items {
+		if item.GetID() == id {
+			if found {
+				return res, ErrDuplicateFound
+			}
+			found = true
+			res = item
+		}
+	}
+
+	if !found {
+		return res, ErrNotFound
+	}
+	return res, nil
 }

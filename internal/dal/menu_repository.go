@@ -28,27 +28,7 @@ func (mr *MenuItemsRepository) GetAllMenuItems() (*[]*models.MenuItem, error) {
 }
 
 func (r *MenuItemsRepository) GetMenuItemByID(id string) (*models.MenuItem, error) {
-	menuItems := make([]models.MenuItem, 0)
-	var res *models.MenuItem = nil 
-
-	f, err := os.ReadFile(path.Join(r.dir, menuItemsFile))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = json.Unmarshal(f, &menuItems); err != nil {
-		return nil, err
-	}
-
-	for _, menuItem := range menuItems {
-		if menuItem.ID == id {
-			res = &menuItem
-		}
-	}
-	if res == nil {
-		return nil, ErrNotFound
-	}
-	return res, nil
+	return GetById[models.MenuItem](r.dir, men)
 }
 
 // add menu to db if id duplicate error will return
