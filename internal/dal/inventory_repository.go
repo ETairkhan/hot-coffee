@@ -15,6 +15,42 @@ type InventoryRepository struct {
 	dir string
 }
 
+func NewInventoryRepository(dir string) *InventoryRepository {
+	return &InventoryRepository{
+		dir: dir,
+	}
+}
+
+func (ir *InventoryRepository) CreateInventoryItems(inventoryItem *models.InventoryItem) error {
+	inventoryItems := make([]models.InventoryItem, 0)
+	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
+	if err != nil {
+		return err
+	}
+
+	if err = json.Unmarshal(f, &inventoryItems); err != nil {
+		return err
+	}
+
+	for _, item1 := range inventoryItems {
+		if item1.IngredientID == inventoryItem.IngredientID {
+			return ErrDuplicateFound
+		}
+	}
+
+	inventoryItems = append(inventoryItems, *inventoryItem)
+
+	data, err := json.MarshalIndent(&inventoryItems, "", "  ") // create array of byte and contain with spaces
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(path.Join(ir.dir, inventoryItemsFile), data, fs.FileMode(os.O_TRUNC))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ir *InventoryRepository) GetAllInventory() (*[]*models.InventoryItem, error) {
 	return GetAllItems[*models.InventoryItem](ir.dir, inventoryItemsFile)
 }

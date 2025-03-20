@@ -16,8 +16,9 @@ type server struct {
 	port int
 	Dir  string
 
-	orderHandler *handler.OrderHandler
-	menuHandler *handler.MenuHandler
+	orderHandler     *handler.OrderHandler
+	menuHandler      *handler.MenuHandler
+	inventoryHandler *handler.InventoryHandler
 
 	mux *http.ServeMux
 }
@@ -28,19 +29,23 @@ func NewServer(port int, dir string) (*server, error) {
 	}
 	orderRepository := dal.NewOrderRepository(dir)
 	menuRepository := dal.NewMenuRepository(dir)
+	inventoryRepository := dal.NewInventoryRepository(dir)
 
 	orderServ := service.NewOrderService(orderRepository)
 	menuServ := service.NewMenuService(menuRepository)
+	inventoryServ := service.NewInventoryService(inventoryRepository)
 
 	orderHandler := handler.NewOrderHandler(orderServ)
 	menuHandler := handler.NewMenuHandler(menuServ)
+	inventoryHandler := handler.NewInventoryHandler(inventoryServ)
 
 	s := server{
-		port:    port,
-		Dir:     dir,
-		mux:     http.NewServeMux(),
-		orderHandler: orderHandler,
-		menuHandler: menuHandler,
+		port:             port,
+		Dir:              dir,
+		mux:              http.NewServeMux(),
+		orderHandler:     orderHandler,
+		menuHandler:      menuHandler,
+		inventoryHandler: inventoryHandler,
 	}
 
 	s.registerRoutes()
@@ -50,18 +55,24 @@ func NewServer(port int, dir string) (*server, error) {
 
 // registerRoutes sets up HTTP routes for order handling
 func (s *server) registerRoutes() {
-	s.mux.HandleFunc("POST /orders", s.orderHandler.CreateOrder)     
-	s.mux.HandleFunc("GET /orders", s.orderHandler.GetOrders)      
-	s.mux.HandleFunc("GET /orders/{id}", s.orderHandler.GetOrderByID) 
-	s.mux.HandleFunc("PUT /orders/{id}", s.orderHandler.UpdateOrder) 
-	s.mux.HandleFunc("DELETE /orders/{id}", s.orderHandler.DeleteOrder) 
-	s.mux.HandleFunc("POST /orders/{id}/close", s.orderHandler.CloseOrder)  
+	s.mux.HandleFunc("POST /orders", s.orderHandler.CreateOrder)
+	s.mux.HandleFunc("GET /orders", s.orderHandler.GetOrders)
+	s.mux.HandleFunc("GET /orders/{id}", s.orderHandler.GetOrderByID)
+	s.mux.HandleFunc("PUT /orders/{id}", s.orderHandler.UpdateOrder)
+	s.mux.HandleFunc("DELETE /orders/{id}", s.orderHandler.DeleteOrder)
+	s.mux.HandleFunc("POST /orders/{id}/close", s.orderHandler.CloseOrder)
 
 	s.mux.HandleFunc("POST /menu", s.menuHandler.CreateMenu)
 	s.mux.HandleFunc("GET /menu", s.menuHandler.GetAllMenuItems)
 	s.mux.HandleFunc("GET /menu/{id}", s.menuHandler.GetMenuItemByID)
 	s.mux.HandleFunc("PUT /menu/{id}", s.menuHandler.UpdateMenuItem)
 	s.mux.HandleFunc("DELETE /menu/{id}", s.menuHandler.DeleteMenuItemById)
+
+	s.mux.HandleFunc("POST /inventory", s.inventoryHandler.CreateInventoryItems)
+	s.mux.HandleFunc("GET /inventory", s.inventoryHandler.GetAllInventory)
+	s.mux.HandleFunc("GET /inventory/{id}", s.inventoryHandler.GetInventoryById)
+	s.mux.HandleFunc("PUT /inventory/{id}", s.inventoryHandler.UpdateInventoryItem)
+	s.mux.HandleFunc("DELETE /inventory/{id}", s.inventoryHandler.DeleteInventoryItem)
 }
 
 func (s *server) Run() error {
