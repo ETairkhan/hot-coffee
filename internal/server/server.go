@@ -18,6 +18,7 @@ type server struct {
 
 	orderHandler *handler.OrderHandler
 	menuHandler *handler.MenuHandler
+	inventoryHandler *handler.InventoryHandler
 
 	mux *http.ServeMux
 }
@@ -28,12 +29,15 @@ func NewServer(port int, dir string) (*server, error) {
 	}
 	orderRepository := dal.NewOrderRepository(dir)
 	menuRepository := dal.NewMenuRepository(dir)
+	inventoryRepository := dal.NewInventoryRepository(dir)
 
 	orderServ := service.NewOrderService(orderRepository)
 	menuServ := service.NewMenuService(menuRepository)
+	inventoryServ := service.NewInventoryService(inventoryRepository)
 
 	orderHandler := handler.NewOrderHandler(orderServ)
 	menuHandler := handler.NewMenuHandler(menuServ)
+	inventoryHandler := handler.NewInventoryHandler(inventoryServ) 
 
 	s := server{
 		port:    port,
@@ -41,6 +45,7 @@ func NewServer(port int, dir string) (*server, error) {
 		mux:     http.NewServeMux(),
 		orderHandler: orderHandler,
 		menuHandler: menuHandler,
+		inventoryHandler: inventoryHandler,
 	}
 
 	s.registerRoutes()

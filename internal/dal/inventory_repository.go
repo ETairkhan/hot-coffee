@@ -15,7 +15,13 @@ type InventoryRepository struct {
 	dir string
 }
 
-func (ir *InventoryRepository) CreateInventoryItem(inventoryItem *models.InventoryItem) error {
+func NewInventoryRepository(dir string) *InventoryRepository {
+	return &InventoryRepository{
+		dir: dir,
+	}
+}
+
+func (ir *InventoryRepository) CreateInventoryItems(inventoryItem *models.InventoryItem) error {
 	inventoryItems := make([]models.InventoryItem, 0)
 	f, err := os.ReadFile(path.Join(ir.dir, inventoryItemsFile))
 	if err != nil {
