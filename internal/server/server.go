@@ -1,24 +1,26 @@
 package server
 
 import (
-	"ayzhunis/hot-coffee/internal/dal"
-	"ayzhunis/hot-coffee/internal/handler"
-	"ayzhunis/hot-coffee/internal/service"
 	"errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"ayzhunis/hot-coffee/internal/dal"
+	"ayzhunis/hot-coffee/internal/handler"
+	"ayzhunis/hot-coffee/internal/service"
 )
 
 type server struct {
 	port int
 	Dir  string
 
-	orderHandler     *handler.OrderHandler
-	menuHandler      *handler.MenuHandler
-	inventoryHandler *handler.InventoryHandler
+	orderHandler       *handler.OrderHandler
+	menuHandler        *handler.MenuHandler
+	inventoryHandler   *handler.InventoryHandler
+	aggregationHandler *handler.AggregationHandler
 
 	mux *http.ServeMux
 }
@@ -39,13 +41,17 @@ func NewServer(port int, dir string) (*server, error) {
 	menuHandler := handler.NewMenuHandler(menuServ)
 	inventoryHandler := handler.NewInventoryHandler(inventoryServ)
 
+	aggregationServ := service.NewAggregationService(orderRepository, menuRepository, inventoryRepository)
+	aggregationHandler := handler.NewAggregationHandler(aggregationServ)
+
 	s := server{
-		port:             port,
-		Dir:              dir,
-		mux:              http.NewServeMux(),
-		orderHandler:     orderHandler,
-		menuHandler:      menuHandler,
-		inventoryHandler: inventoryHandler,
+		port:               port,
+		Dir:                dir,
+		mux:                http.NewServeMux(),
+		orderHandler:       orderHandler,
+		menuHandler:        menuHandler,
+		inventoryHandler:   inventoryHandler,
+		aggregationHandler: aggregationHandler,
 	}
 
 	s.registerRoutes()
@@ -73,6 +79,8 @@ func (s *server) registerRoutes() {
 	s.mux.HandleFunc("GET /inventory/{id}", s.inventoryHandler.GetInventoryById)
 	s.mux.HandleFunc("PUT /inventory/{id}", s.inventoryHandler.UpdateInventoryItem)
 	s.mux.HandleFunc("DELETE /inventory/{id}", s.inventoryHandler.DeleteInventoryItem)
+
+	s.mux.HandleFunc("GET /reports/total-sales", s.aggregationHandler.TotalSales)
 }
 
 func (s *server) Run() error {
