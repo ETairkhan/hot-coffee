@@ -34,7 +34,7 @@ func (s *InventoryService) GetAllInventory() (*[]models.InventoryItem, error) {
 func (s *InventoryService) GetInventoryById(id string) (*models.InventoryItem, error) {
 	inven, err := s.InvenRepo.GetInventoryById(id)
 	if err != nil {
-		return nil, errors.New("menu not found")
+		return nil, errors.New("inventory not found")
 	}
 	return inven, nil
 }

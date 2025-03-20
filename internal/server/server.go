@@ -67,6 +67,12 @@ func (s *server) registerRoutes() {
 	s.mux.HandleFunc("GET /menu/{id}", s.menuHandler.GetMenuItemByID)
 	s.mux.HandleFunc("PUT /menu/{id}", s.menuHandler.UpdateMenuItem)
 	s.mux.HandleFunc("DELETE /menu/{id}", s.menuHandler.DeleteMenuItemById)
+
+	s.mux.HandleFunc("POST /inventory", s.inventoryHandler.CreateInventoryItems)
+	s.mux.HandleFunc("GET /inventory", s.inventoryHandler.GetAllInventory)
+	s.mux.HandleFunc("GET /inventory/{id}", s.inventoryHandler.GetInventoryById)
+	s.mux.HandleFunc("PUT /inventory/{id}", s.inventoryHandler.UpdateInventoryItem)
+	s.mux.HandleFunc("DELETE /inventory/{id}", s.inventoryHandler.DeleteInventoryItem)
 }
 
 func (s *server) Run() error {
