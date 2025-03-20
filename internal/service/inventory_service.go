@@ -3,6 +3,7 @@ package service
 import (
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/models"
+	"errors"
 )
 
 type InventoryService struct {
@@ -17,31 +18,31 @@ func (s *InventoryService) CreateInventoryItems(menu *models.InventoryItem) erro
 	return s.InvenRepo.CreateInventoryItems(menu)
 }
 
-func (s *InventoryService) GetAllMenu() (*[]models.MenuItem, error) {
-	items, err := s.InvenRepo.GetAllMenuItems()
+func (s *InventoryService) GetAllInventory() (*[]models.InventoryItem, error) {
+	items, err := s.InvenRepo.GetAllInventory()
 	if err != nil {
 		return nil, err
 	}
 
-	newItems := make([]models.MenuItem, len(*items))
+	newItems := make([]models.InventoryItem, len(*items))
 	for i := range *items {
 		newItems[i] = *(*items)[i]
 	}
 	return &newItems, nil
 }
 
-func (s *InventoryService) GetMenuItemByID(id string) (*models.MenuItem, error) {
-	menu, err := s.MenuRepo.GetMenuItemByID(id)
+func (s *InventoryService) GetInventoryById(id string) (*models.InventoryItem, error) {
+	inven, err := s.InvenRepo.GetInventoryById(id)
 	if err != nil {
 		return nil, errors.New("menu not found")
 	}
-	return menu, nil
+	return inven, nil
 }
 
-func (s *InventoryService) UpdateMenuItem(menu *models.MenuItem) error {
-	return s.MenuRepo.UpdateMenuItem(menu)
+func (s *InventoryService) UpdateInventoryItem(inven *models.InventoryItem) error {
+	return s.InvenRepo.UpdateInventoryItem(inven)
 }
 
-func (s *InventoryService) DeleteMenuItemById(id string) error {
-	return s.MenuRepo.DeleteMenuItemById(id)
+func (s *InventoryService) DeleteInventoryItem(id string) error {
+	return s.InvenRepo.DeleteInventoryItem(id)
 }

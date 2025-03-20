@@ -9,15 +9,15 @@ import (
 	"net/http"
 )
 
-type InvenotryHandler struct {
+type InventoryHandler struct {
 	inventoryService *service.InventoryService
 }
 
-func NewInventoryHandler(inventoryService *service.InventoryService) *InvenotryHandler {
-	return &InvenotryHandler{inventoryService: inventoryService}
+func NewInventoryHandler(inventoryService *service.InventoryService) *InventoryHandler {
+	return &InventoryHandler{inventoryService: inventoryService}
 }
 
-func (h *InvenotryHandler) CreateMenu(w http.ResponseWriter, r *http.Request) {
+func (h *InventoryHandler) CreateInventoryItems(w http.ResponseWriter, r *http.Request) {
 	var inv models.InventoryItem
 	if err := json.NewDecoder(r.Body).Decode(&inv); err != nil {
 		slog.Error(err.Error())
@@ -25,67 +25,67 @@ func (h *InvenotryHandler) CreateMenu(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.inventoryService.CreateInve(&inv); err != nil {
+	if err := h.inventoryService.CreateInventoryItems(&inv); err != nil {
 		slog.Error(err.Error())
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	slog.Info("Menu created", utils.PostGroup())
-	h.respondWithJSON(w, http.StatusCreated, menu)
+	h.respondWithJSON(w, http.StatusCreated, inv)
 }
 
 // get all menu
-func (h *InvenotryHandler) GetAllMenuItems(w http.ResponseWriter, r *http.Request) {
-	menuItems, err := h.menuService.GetAllMenu()
+func (h *InventoryHandler) GetAllInventory(w http.ResponseWriter, r *http.Request) {
+	invenItems, err := h.inventoryService.GetAllInventory()
 	if err != nil {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	slog.Info("Menu items received", utils.ReqGroup())
-	h.respondWithJSON(w, http.StatusOK, menuItems)
+	h.respondWithJSON(w, http.StatusOK, invenItems)
 }
 
 // get menu by id
-func (h *InvenotryHandler) GetMenuItemByID(w http.ResponseWriter, r *http.Request) {
+func (h *InventoryHandler) GetInventoryById(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
 		return
 	}
 
-	menuItems, err := h.menuService.GetMenuItemByID(id)
+	invenItems, err := h.inventoryService.GetInventoryById(id)
 	if err != nil {
 		h.respondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
 	slog.Info("Menu received by id", utils.ReqGroup())
-	h.respondWithJSON(w, http.StatusOK, menuItems)
+	h.respondWithJSON(w, http.StatusOK, invenItems)
 }
 
-func (h *InvenotryHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
-	var menu models.MenuItem
-	if err := json.NewDecoder(r.Body).Decode(&menu); err != nil {
+func (h *InventoryHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
+	var inv models.InventoryItem
+	if err := json.NewDecoder(r.Body).Decode(&inv); err != nil {
 		h.respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	if err := h.menuService.UpdateMenuItem(&menu); err != nil {
+	if err := h.inventoryService.UpdateInventoryItem(&inv); err != nil {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	slog.Info("Menu updated", utils.PutGroup())
-	h.respondWithJSON(w, http.StatusOK, menu)
+	h.respondWithJSON(w, http.StatusOK, inv)
 }
 
-func (h *InvenotryHandler) DeleteMenuItemById(w http.ResponseWriter, r *http.Request) {
+func (h *InventoryHandler) DeleteInventoryItem(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
 		h.respondWithError(w, http.StatusBadRequest, "Missing order ID")
 		return
 	}
 
-	if err := h.menuService.DeleteMenuItemById(id); err != nil {
+	if err := h.inventoryService.DeleteInventoryItem(id); err != nil {
 		h.respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -94,13 +94,13 @@ func (h *InvenotryHandler) DeleteMenuItemById(w http.ResponseWriter, r *http.Req
 	h.respondWithJSON(w, http.StatusOK, map[string]string{"message": "Menu deleted successfully"})
 }
 
-func (h *InvenotryHandler) respondWithError(w http.ResponseWriter, code int, message string) {
+func (h *InventoryHandler) respondWithError(w http.ResponseWriter, code int, message string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(map[string]string{"error": message})
 }
 
-func (h *InvenotryHandler) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+func (h *InventoryHandler) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(payload)
