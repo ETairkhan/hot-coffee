@@ -6,11 +6,13 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"sync"
 
 	"ayzhunis/hot-coffee/models"
 )
 
 var (
+	rwm sync.RWMutex
 	ErrClosedAlready  = errors.New("closed already")
 	ErrStatusClosed   = errors.New("status is closed to change")
 	ErrNotFound       = errors.New("not found")
@@ -118,6 +120,9 @@ func DeleteItem[T models.Entity](dir, filename, id string) error {
 }
 
 func writeItems[T models.Entity](dir, filename string, items *[]T) error {
+	rwm.Lock()
+	defer rwm.Unlock()
+	
 	data, err := json.MarshalIndent(items, "", "  ")
 	if err != nil {
 		return err

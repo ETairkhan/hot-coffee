@@ -1,16 +1,15 @@
 package server
 
 import (
+	"ayzhunis/hot-coffee/internal/dal"
+	"ayzhunis/hot-coffee/internal/handler"
+	"ayzhunis/hot-coffee/internal/service"
 	"errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
-
-	"ayzhunis/hot-coffee/internal/dal"
-	"ayzhunis/hot-coffee/internal/handler"
-	"ayzhunis/hot-coffee/internal/service"
 )
 
 type server struct {
@@ -33,9 +32,9 @@ func NewServer(port int, dir string) (*server, error) {
 	menuRepository := dal.NewMenuRepository(dir)
 	inventoryRepository := dal.NewInventoryRepository(dir)
 
-	orderServ := service.NewOrderService(orderRepository)
 	menuServ := service.NewMenuService(menuRepository)
 	inventoryServ := service.NewInventoryService(inventoryRepository)
+	orderServ := service.NewOrderService(orderRepository, menuServ, inventoryServ)
 
 	orderHandler := handler.NewOrderHandler(orderServ)
 	menuHandler := handler.NewMenuHandler(menuServ)
@@ -86,7 +85,8 @@ func (s *server) registerRoutes() {
 
 func (s *server) Run() error {
 	handlerOpts := &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+		Level:     slog.LevelDebug,
+		AddSource: true,
 	}
 	logger := slog.New(slog.NewTextHandler(os.Stderr, handlerOpts))
 	slog.SetDefault(logger)
