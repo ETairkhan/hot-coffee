@@ -4,6 +4,7 @@ import (
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/internal/handler"
 	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/utils"
 	"errors"
 	"fmt"
 	"log"
@@ -28,6 +29,11 @@ func NewServer(port int, dir string) (*server, error) {
 	if port <= 0 || port >= 63535 {
 		return nil, errors.New("invalid port")
 	}
+
+	if err := utils.CheckDir(dir); err != nil {
+		return nil, err
+	}
+
 	orderRepository := dal.NewOrderRepository(dir)
 	menuRepository := dal.NewMenuRepository(dir)
 	inventoryRepository := dal.NewInventoryRepository(dir)
@@ -85,8 +91,7 @@ func (s *server) registerRoutes() {
 
 func (s *server) Run() error {
 	handlerOpts := &slog.HandlerOptions{
-		Level:     slog.LevelDebug,
-		AddSource: true,
+		Level: slog.LevelDebug,
 	}
 	logger := slog.New(slog.NewTextHandler(os.Stderr, handlerOpts))
 	slog.SetDefault(logger)
