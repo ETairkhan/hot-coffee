@@ -85,7 +85,8 @@ func (s *server) registerRoutes() {
 
 func (s *server) Run() error {
 	handlerOpts := &slog.HandlerOptions{
-		Level: slog.LevelDebug,
+		Level:     slog.LevelDebug,
+		AddSource: true,
 	}
 	logger := slog.New(slog.NewTextHandler(os.Stderr, handlerOpts))
 	slog.SetDefault(logger)
