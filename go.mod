@@ -1,3 +1,3 @@
 module ayzhunis/hot-coffee
 
-go 1.22
+go 1.22.6

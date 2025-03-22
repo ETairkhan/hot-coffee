@@ -40,8 +40,8 @@ func (s *OrderService) GetOrderByID(id string) (*models.Order, error) {
 	return order, nil
 }
 
-func (s *OrderService) UpdateOrder(order *models.Order) error {
-	return s.OrderRepo.UpdateOrder(order)
+func (s *OrderService) UpdateOrder(order *models.Order, id string) error {
+	return s.OrderRepo.UpdateOrder(order, id)
 }
 
 func (s *OrderService) DeleteOrder(id string) error {

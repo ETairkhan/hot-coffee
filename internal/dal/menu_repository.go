@@ -31,8 +31,8 @@ func (mr *MenuItemsRepository) CreateMenuItems(item *models.MenuItem) error {
 	return CreateItem(mr.dir, menuItemsFile, item)
 }
 
-func (r *MenuItemsRepository) UpdateMenuItem(item *models.MenuItem) error {
-	return UpdateItem(r.dir, menuItemsFile, item)
+func (r *MenuItemsRepository) UpdateMenuItem(item *models.MenuItem, id string) error {
+	return UpdateItem(r.dir, menuItemsFile, item, id)
 }
 
 // deleting or

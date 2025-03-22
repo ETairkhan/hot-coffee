@@ -1,7 +1,11 @@
 package utils
 
 import (
+	"encoding/json"
 	"log/slog"
+	"net/http"
+
+	"ayzhunis/hot-coffee/models"
 )
 
 func ReqGroup() slog.Attr {
@@ -34,4 +38,28 @@ func DeleteGroup() slog.Attr {
 		"method", "DELETE",
 	)
 	return PostGroup
+}
+
+func IsContain[T models.Entity](id string, items *[]T) (T, bool) {
+	var res T
+	for _, item := range *items {
+		if (item).GetID() == id {
+			return item, true
+		}
+	}
+	return res, false
+}
+
+func RespondWithError(w http.ResponseWriter, code int, message string) {
+	slog.Error(message)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(map[string]string{"error": message})
+}
+
+func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	json.NewEncoder(w).Encode(payload)
 }

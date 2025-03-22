@@ -70,14 +70,14 @@ func CreateItem[T models.Entity](dir, filename string, item T) error {
 	return writeItems(dir, filename, items)
 }
 
-func UpdateItem[T models.Entity](dir, filename string, item T) error {
+func UpdateItem[T models.Entity](dir, filename string, item T, id string) error {
 	items, err := GetAllItems[T](dir, filename)
 	if err != nil {
 		return err
 	}
 	found := false
 	for i := range *items {
-		if (*items)[i].GetID() == item.GetID() {
+		if (*items)[i].GetID() == id {
 			(*items)[i] = item
 			if found {
 				return ErrDuplicateFound
