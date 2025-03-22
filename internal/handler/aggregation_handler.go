@@ -20,7 +20,6 @@ func NewAggregationHandler(aggregationService *service.AggregationService) *Aggr
 func (a *AggregationHandler) TotalSales(w http.ResponseWriter, r *http.Request) {
 	total, err := a.aggregationService.TotalSales()
 	if err != nil {
-		slog.Error(err.Error())
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -31,7 +30,6 @@ func (a *AggregationHandler) TotalSales(w http.ResponseWriter, r *http.Request) 
 func (a *AggregationHandler) PopularItems(w http.ResponseWriter, r *http.Request) {
 	item, err := a.aggregationService.PopularItems()
 	if err != nil {
-		slog.Error(err.Error())
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
