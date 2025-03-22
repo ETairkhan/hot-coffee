@@ -63,13 +63,19 @@ func (h *MenuHandler) GetMenuItemByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MenuHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	if id == "" {
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		return
+	}
 	var menu models.MenuItem
 	if err := json.NewDecoder(r.Body).Decode(&menu); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	if err := h.menuService.UpdateMenuItem(&menu); err != nil {
+	if err := h.menuService.UpdateMenuItem(&menu, id); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

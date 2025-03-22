@@ -61,13 +61,20 @@ func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	if id == "" {
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		return
+	}
+
 	var order models.Order
 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	if err := h.orderService.UpdateOrder(&order); err != nil {
+	if err := h.orderService.UpdateOrder(&order, id); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

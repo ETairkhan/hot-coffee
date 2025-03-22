@@ -39,8 +39,8 @@ func (s *InventoryService) GetInventoryById(id string) (*models.InventoryItem, e
 	return inven, nil
 }
 
-func (s *InventoryService) UpdateInventoryItem(inven *models.InventoryItem) error {
-	return s.InvenRepo.UpdateInventoryItem(inven)
+func (s *InventoryService) UpdateInventoryItem(inven *models.InventoryItem, id string) error {
+	return s.InvenRepo.UpdateInventoryItem(inven, id)
 }
 
 func (s *InventoryService) DeleteInventoryItem(id string) error {

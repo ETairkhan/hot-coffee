@@ -63,13 +63,20 @@ func (h *InventoryHandler) GetInventoryById(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *InventoryHandler) UpdateInventoryItem(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+
+	if id == "" {
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		return
+	}
+
 	var inv models.InventoryItem
 	if err := json.NewDecoder(r.Body).Decode(&inv); err != nil {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	if err := h.inventoryService.UpdateInventoryItem(&inv); err != nil {
+	if err := h.inventoryService.UpdateInventoryItem(&inv, id); err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

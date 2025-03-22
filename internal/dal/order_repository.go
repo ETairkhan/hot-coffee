@@ -34,8 +34,8 @@ func (r *OrderRepository) CreateOrder(order *models.Order) error {
 	return CreateItem(r.dir, ordersFile, order)
 }
 
-func (r *OrderRepository) UpdateOrder(order *models.Order) error {
-	return UpdateItem(r.dir, string(ordersFile), order)
+func (r *OrderRepository) UpdateOrder(order *models.Order, id string) error {
+	return UpdateItem(r.dir, string(ordersFile), order, id)
 }
 
 func (r *OrderRepository) DeleteOrderById(id string) error {

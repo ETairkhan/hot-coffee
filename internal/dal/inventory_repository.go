@@ -28,8 +28,8 @@ func (ir *InventoryRepository) CreateInventoryItem(item *models.InventoryItem) e
 	return CreateItem(ir.dir, inventoryItemsFile, item)
 }
 
-func (ir *InventoryRepository) UpdateInventoryItem(item *models.InventoryItem) error {
-	return UpdateItem(ir.dir, inventoryItemsFile, item)
+func (ir *InventoryRepository) UpdateInventoryItem(item *models.InventoryItem, id string) error {
+	return UpdateItem(ir.dir, inventoryItemsFile, item, id)
 }
 
 func (ir *InventoryRepository) DeleteInventoryItem(id string) error {

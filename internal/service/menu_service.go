@@ -39,8 +39,8 @@ func (s *MenuService) GetMenuItemByID(id string) (*models.MenuItem, error) {
 	return menu, nil
 }
 
-func (s *MenuService) UpdateMenuItem(menu *models.MenuItem) error {
-	return s.MenuRepo.UpdateMenuItem(menu)
+func (s *MenuService) UpdateMenuItem(menu *models.MenuItem, id string) error {
+	return s.MenuRepo.UpdateMenuItem(menu, id)
 }
 
 func (s *MenuService) DeleteMenuItemById(id string) error {
