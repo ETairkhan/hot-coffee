@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"ayzhunis/hot-coffee/aerrors"
 	"ayzhunis/hot-coffee/internal/service"
 	"ayzhunis/hot-coffee/models"
 	"ayzhunis/hot-coffee/utils"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 )
@@ -26,6 +28,10 @@ func (h *InventoryHandler) CreateInventoryItems(w http.ResponseWriter, r *http.R
 	}
 
 	if err := h.inventoryService.CreateInventoryItems(&inv); err != nil {
+		if errors.Is(err, aerrors.ErrExist) {
+			utils.RespondWithError(w, http.StatusConflict, aerrors.ErrExist.Error())
+			return
+		}
 		slog.Error(err.Error())
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
@@ -34,7 +40,7 @@ func (h *InventoryHandler) CreateInventoryItems(w http.ResponseWriter, r *http.R
 	utils.RespondWithJSON(w, http.StatusCreated, inv)
 }
 
-// get all menu
+// get all inventory items
 func (h *InventoryHandler) GetAllInventory(w http.ResponseWriter, r *http.Request) {
 	invenItems, err := h.inventoryService.GetAllInventory()
 	if err != nil {
@@ -45,17 +51,21 @@ func (h *InventoryHandler) GetAllInventory(w http.ResponseWriter, r *http.Reques
 	utils.RespondWithJSON(w, http.StatusOK, invenItems)
 }
 
-// get menu by id
+// get inventory item by id
 func (h *InventoryHandler) GetInventoryById(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing inventory ID")
 		return
 	}
 
 	invenItems, err := h.inventoryService.GetInventoryById(id)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusNotFound, err.Error())
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	slog.Info("Inventory received by id", utils.ReqGroup())
@@ -66,7 +76,7 @@ func (h *InventoryHandler) UpdateInventoryItem(w http.ResponseWriter, r *http.Re
 	id := r.PathValue("id")
 
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing inventory ID")
 		return
 	}
 
@@ -77,6 +87,10 @@ func (h *InventoryHandler) UpdateInventoryItem(w http.ResponseWriter, r *http.Re
 	}
 
 	if err := h.inventoryService.UpdateInventoryItem(&inv, id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -88,11 +102,15 @@ func (h *InventoryHandler) UpdateInventoryItem(w http.ResponseWriter, r *http.Re
 func (h *InventoryHandler) DeleteInventoryItem(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing inventory ID")
 		return
 	}
 
 	if err := h.inventoryService.DeleteInventoryItem(id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
