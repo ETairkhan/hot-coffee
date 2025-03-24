@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"ayzhunis/hot-coffee/aerrors"
 	"ayzhunis/hot-coffee/internal/service"
 	"ayzhunis/hot-coffee/models"
 	"ayzhunis/hot-coffee/utils"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 )
@@ -20,13 +22,15 @@ func NewMenuHandler(menuService *service.MenuService) *MenuHandler {
 func (h *MenuHandler) CreateMenu(w http.ResponseWriter, r *http.Request) {
 	var menu models.MenuItem
 	if err := json.NewDecoder(r.Body).Decode(&menu); err != nil {
-		slog.Error(err.Error())
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
 	if err := h.menuService.CreateMenuItems(&menu); err != nil {
-		slog.Error(err.Error())
+		if errors.Is(err, aerrors.ErrExist) {
+			utils.RespondWithError(w, http.StatusConflict, aerrors.ErrExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -49,13 +53,17 @@ func (h *MenuHandler) GetAllMenuItems(w http.ResponseWriter, r *http.Request) {
 func (h *MenuHandler) GetMenuItemByID(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing menu ID")
 		return
 	}
 
 	menuItems, err := h.menuService.GetMenuItemByID(id)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusNotFound, err.Error())
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
+		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	slog.Info("Menu received by id", utils.ReqGroup())
@@ -66,7 +74,7 @@ func (h *MenuHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing menu ID")
 		return
 	}
 	var menu models.MenuItem
@@ -76,6 +84,10 @@ func (h *MenuHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.menuService.UpdateMenuItem(&menu, id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -87,11 +99,15 @@ func (h *MenuHandler) UpdateMenuItem(w http.ResponseWriter, r *http.Request) {
 func (h *MenuHandler) DeleteMenuItemById(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
-		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
+		utils.RespondWithError(w, http.StatusBadRequest, "Missing menu ID")
 		return
 	}
 
 	if err := h.menuService.DeleteMenuItemById(id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
