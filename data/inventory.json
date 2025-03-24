@@ -2,7 +2,7 @@
   {
     "ingredient_id": "espresso_shot",
     "name": "Espresso Shot",
-    "quantity": 499,
+    "quantity": 498,
     "unit": "shots"
   },
   {
@@ -25,8 +25,8 @@
   },
   {
     "ingredient_id": "milk",
-    "name": "Moscow never sleep",
-    "quantity": 0,
+    "name": "Milk",
+    "quantity": 1200,
     "unit": "ml"
   }
 ]
