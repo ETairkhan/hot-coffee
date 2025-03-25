@@ -14,7 +14,7 @@ type MenuService struct {
 }
 
 func NewMenuService(repo *dal.MenuItemsRepository, iven *dal.InventoryRepository) *MenuService {
-	return &MenuService{MenuRepo: repo}
+	return &MenuService{MenuRepo: repo, IvenRepo: iven}
 }
 
 func (s *MenuService) CreateMenuItems(menu *models.MenuItem) error {
@@ -49,7 +49,7 @@ func (s *MenuService) GetAllMenu() (*[]models.MenuItem, error) {
 func (s *MenuService) GetMenuItemByID(id string) (*models.MenuItem, error) {
 	menu, err := s.MenuRepo.GetMenuItemByID(id)
 	if err != nil {
-		return nil, errors.New("menu not found")
+		return nil, errors.New("menu's item not found")
 	}
 	return menu, nil
 }
