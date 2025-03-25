@@ -1,9 +1,11 @@
 package service
 
 import (
+	"errors"
+
+	"ayzhunis/hot-coffee/helper"
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/models"
-	"errors"
 )
 
 type InventoryService struct {
@@ -14,8 +16,12 @@ func NewInventoryService(repo *dal.InventoryRepository) *InventoryService {
 	return &InventoryService{InvenRepo: repo}
 }
 
-func (s *InventoryService) CreateInventoryItems(menu *models.InventoryItem) error {
-	return s.InvenRepo.CreateInventoryItem(menu)
+func (s *InventoryService) CreateInventoryItems(iven *models.InventoryItem) error {
+	err := helper.CheckerForInventItems(*iven)
+	if err != nil {
+		return err
+	}
+	return s.InvenRepo.CreateInventoryItem(iven)
 }
 
 func (s *InventoryService) GetAllInventory() (*[]models.InventoryItem, error) {
@@ -40,6 +46,10 @@ func (s *InventoryService) GetInventoryById(id string) (*models.InventoryItem, e
 }
 
 func (s *InventoryService) UpdateInventoryItem(inven *models.InventoryItem, id string) error {
+	err := helper.CheckerForInventItems(*inven)
+	if err != nil {
+		return err
+	}
 	return s.InvenRepo.UpdateInventoryItem(inven, id)
 }
 

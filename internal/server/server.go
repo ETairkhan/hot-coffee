@@ -28,19 +28,21 @@ func NewServer(port int, dir string) (*server, error) {
 	if port <= 0 || port >= 63535 {
 		return nil, errors.New("invalid port")
 	}
+	// Repository
 	orderRepository := dal.NewOrderRepository(dir)
 	menuRepository := dal.NewMenuRepository(dir)
 	inventoryRepository := dal.NewInventoryRepository(dir)
 
-	menuServ := service.NewMenuService(menuRepository)
+	// Service
+	menuServ := service.NewMenuService(menuRepository, inventoryRepository)
 	inventoryServ := service.NewInventoryService(inventoryRepository)
 	orderServ := service.NewOrderService(orderRepository, menuServ, inventoryServ)
+	aggregationServ := service.NewAggregationService(orderRepository, menuRepository, inventoryRepository)
 
+	// Handler
 	orderHandler := handler.NewOrderHandler(orderServ)
 	menuHandler := handler.NewMenuHandler(menuServ)
 	inventoryHandler := handler.NewInventoryHandler(inventoryServ)
-
-	aggregationServ := service.NewAggregationService(orderRepository, menuRepository, inventoryRepository)
 	aggregationHandler := handler.NewAggregationHandler(aggregationServ)
 
 	s := server{
