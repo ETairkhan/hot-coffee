@@ -1,12 +1,14 @@
 package handler
 
 import (
-	"ayzhunis/hot-coffee/internal/service"
-	"ayzhunis/hot-coffee/models"
-	"ayzhunis/hot-coffee/utils"
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"sort"
+
+	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/models"
+	"ayzhunis/hot-coffee/utils"
 )
 
 type MenuHandler struct {
@@ -36,10 +38,22 @@ func (h *MenuHandler) CreateMenu(w http.ResponseWriter, r *http.Request) {
 
 // get all menu
 func (h *MenuHandler) GetAllMenuItems(w http.ResponseWriter, r *http.Request) {
+	sortBy := r.URL.Query().Get("sort")
 	menuItems, err := h.menuService.GetAllMenu()
 	if err != nil {
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	switch sortBy {
+	case "ASC", "asc":
+		sort.Slice(*menuItems, func(i, j int) bool {
+			return (*menuItems)[i].Price < (*menuItems)[j].Price
+		})
+	case "DESC", "desc":
+		sort.Slice(*menuItems, func(i, j int) bool {
+			return (*menuItems)[i].Price > (*menuItems)[j].Price
+		})
 	}
 	slog.Info("Menu items received", utils.ReqGroup())
 	utils.RespondWithJSON(w, http.StatusOK, menuItems)
