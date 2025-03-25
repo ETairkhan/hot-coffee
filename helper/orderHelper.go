@@ -29,7 +29,7 @@ func CheckForOrders(orderItems models.Order, files []models.MenuItem) error {
 	if len(orderItems.Items) <= 0 {
 		return fmt.Errorf("please provide items for the order")
 	}
-	if orderItems.Status == "open" || orderItems.Status == "closed" {
+	if !(orderItems.Status == "open" || orderItems.Status == "closed") {
 		return fmt.Errorf("please provide status")
 	}
 	return nil
