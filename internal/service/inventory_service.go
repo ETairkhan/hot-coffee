@@ -17,7 +17,7 @@ func NewInventoryService(repo *dal.InventoryRepository) *InventoryService {
 }
 
 func (s *InventoryService) CreateInventoryItems(iven *models.InventoryItem) error {
-	err := helper.CheckerForInventItems(*iven)
+	err := helper.CheckerForInventItems(iven)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (s *InventoryService) GetInventoryById(id string) (*models.InventoryItem, e
 }
 
 func (s *InventoryService) UpdateInventoryItem(inven *models.InventoryItem, id string) error {
-	err := helper.CheckerForInventItems(*inven)
+	err := helper.CheckerForInventItems(inven)
 	if err != nil {
 		return err
 	}

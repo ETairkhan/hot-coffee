@@ -7,7 +7,7 @@ import (
 )
 
 func CheckForOrders(orderItems models.Order, files []models.MenuItem) error {
-	if orderItems.ID != "" {
+	if orderItems.ID == "" {
 		return fmt.Errorf("order validation failed: order ID is already set: %s", orderItems.ID)
 	}
 
@@ -26,6 +26,11 @@ func CheckForOrders(orderItems models.Order, files []models.MenuItem) error {
 			return fmt.Errorf("please specify a quantity greater than zero for the item")
 		}
 	}
-
+	if len(orderItems.Items) <= 0 {
+		return fmt.Errorf("please provide items for the order")
+	}
+	if orderItems.Status == "open" || orderItems.Status == "closed" {
+		return fmt.Errorf("please provide status")
+	}
 	return nil
 }

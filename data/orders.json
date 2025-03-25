@@ -1,6 +1,6 @@
 [
   {
-    "order_id": "123",
+    "order_id": "order123",
     "customer_name": "Alice Smith",
     "items": [
       {
@@ -25,6 +25,18 @@
       }
     ],
     "status": "closed",
+    "created_at": "2023-10-01T09:30:00Z"
+  },
+  {
+    "order_id": "order",
+    "customer_name": "Bob ",
+    "items": [
+      {
+        "product_id": "espresso",
+        "quantity": 1
+      }
+    ],
+    "status": "",
     "created_at": "2023-10-01T09:30:00Z"
   }
 ]

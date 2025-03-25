@@ -20,8 +20,8 @@ func CheckItemId(files []models.InventoryItem, id string) error {
 	return fmt.Errorf("item with ID %s not found: %w", id, aerrors.ErrNotExist)
 }
 
-func CheckerForInventItems(inventItems models.InventoryItem) error {
-	if inventItems.IngredientID != "" {
+func CheckerForInventItems(inventItems *models.InventoryItem) error {
+	if inventItems.IngredientID == "" {
 		return fmt.Errorf("item ID should not be set when adding a new item")
 	}
 	if inventItems.Name == "" {
