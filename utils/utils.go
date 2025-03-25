@@ -2,10 +2,20 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
+	"os"
+	"path"
+	"regexp"
 
 	"ayzhunis/hot-coffee/models"
+)
+
+const (
+	inventory  = "inventory.json"
+	menu_items = "menu_items.json"
+	orders     = "orders.json"
 )
 
 func ReqGroup() slog.Attr {
@@ -63,4 +73,42 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(payload)
+}
+
+func CheckDir(dirname string) error {
+	re := regexp.MustCompile("^[a-zA-z0-9]+$")
+	if !re.MatchString(dirname) {
+		return errors.New("invalide filename")
+	}
+
+	_, err := os.Stat(dirname)
+	if os.IsNotExist(err) {
+		if err := os.Mkdir(dirname, 0755); err != nil {
+			return err
+		}
+	}
+	files := []string{inventory, menu_items, orders}
+
+	for _, f := range files {
+		if err := CreateNotExist(dirname, f); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func CreateNotExist(dirname, filename string) error {
+	if _, err := os.Stat(path.Join(dirname, filename)); os.IsNotExist(err) {
+		// fmt.Println(path.Join(dirname, filename))
+		f, err := os.Create(path.Join(dirname, filename))
+		if err != nil {
+			return err
+		}
+		_, err = f.Write([]byte(`[]`))
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
