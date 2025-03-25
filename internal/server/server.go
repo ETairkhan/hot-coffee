@@ -1,15 +1,16 @@
 package server
 
 import (
-	"ayzhunis/hot-coffee/internal/dal"
-	"ayzhunis/hot-coffee/internal/handler"
-	"ayzhunis/hot-coffee/internal/service"
 	"errors"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
+
+	"ayzhunis/hot-coffee/internal/dal"
+	"ayzhunis/hot-coffee/internal/handler"
+	"ayzhunis/hot-coffee/internal/service"
 )
 
 type server struct {

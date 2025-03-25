@@ -21,6 +21,7 @@ func (s *InventoryService) CreateInventoryItems(iven *models.InventoryItem) erro
 	if err != nil {
 		return err
 	}
+
 	return s.InvenRepo.CreateInventoryItem(iven)
 }
 

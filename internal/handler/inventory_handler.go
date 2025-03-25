@@ -1,14 +1,15 @@
 package handler
 
 import (
-	"ayzhunis/hot-coffee/aerrors"
-	"ayzhunis/hot-coffee/internal/service"
-	"ayzhunis/hot-coffee/models"
-	"ayzhunis/hot-coffee/utils"
 	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
+
+	"ayzhunis/hot-coffee/aerrors"
+	"ayzhunis/hot-coffee/internal/service"
+	"ayzhunis/hot-coffee/models"
+	"ayzhunis/hot-coffee/utils"
 )
 
 type InventoryHandler struct {

@@ -2,24 +2,10 @@ package helper
 
 import (
 	"fmt"
-	"strings"
 
 	"ayzhunis/hot-coffee/aerrors"
 	"ayzhunis/hot-coffee/models"
 )
-
-func CheckItemExists(files []models.InventoryItem, name string, unit string) (*models.InventoryItem, error) {
-	if files == nil {
-		return nil, fmt.Errorf("file is nil")
-	}
-
-	for _, item := range files {
-		if strings.ToLower(item.Name) == strings.ToLower(name) && strings.ToLower(item.Unit) == strings.ToLower(unit) {
-			return &item, nil
-		}
-	}
-	return nil, aerrors.ErrNotExist
-}
 
 func CheckItemId(files []models.InventoryItem, id string) error {
 	if files == nil {
