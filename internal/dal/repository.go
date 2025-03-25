@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	rwm sync.RWMutex
+	rwm               sync.RWMutex
 	ErrClosedAlready  = errors.New("closed already")
 	ErrStatusClosed   = errors.New("status is closed to change")
 	ErrNotFound       = errors.New("not found")
@@ -93,7 +93,7 @@ func UpdateItem[T models.Entity](dir, filename string, item T, id string) error 
 	}
 
 	return writeItems(dir, filename, items)
-} 
+}
 
 func DeleteItem[T models.Entity](dir, filename, id string) error {
 	items, err := GetAllItems[T](dir, filename)
@@ -122,7 +122,7 @@ func DeleteItem[T models.Entity](dir, filename, id string) error {
 func writeItems[T models.Entity](dir, filename string, items *[]T) error {
 	rwm.Lock()
 	defer rwm.Unlock()
-	
+
 	data, err := json.MarshalIndent(items, "", "  ")
 	if err != nil {
 		return err

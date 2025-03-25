@@ -1,12 +1,15 @@
 package handler
 
 import (
+	"encoding/json"
+	"errors"
+	"log/slog"
+	"net/http"
+
+	"ayzhunis/hot-coffee/aerrors"
 	"ayzhunis/hot-coffee/internal/service"
 	"ayzhunis/hot-coffee/models"
 	"ayzhunis/hot-coffee/utils"
-	"encoding/json"
-	"log/slog"
-	"net/http"
 )
 
 type OrderHandler struct {
@@ -25,7 +28,11 @@ func (h *OrderHandler) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.orderService.CreateOrder(&order); err != nil {
-		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		if errors.Is(err, aerrors.ErrExist) {
+			utils.RespondWithError(w, http.StatusConflict, aerrors.ErrExist.Error())
+			return
+		}
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	slog.Info("Order created", utils.PostGroup())
@@ -53,7 +60,11 @@ func (h *OrderHandler) GetOrderByID(w http.ResponseWriter, r *http.Request) {
 
 	order, err := h.orderService.GetOrderByID(id)
 	if err != nil {
-		utils.RespondWithError(w, http.StatusNotFound, err.Error())
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	slog.Info("Order received by id", utils.ReqGroup())
@@ -75,12 +86,16 @@ func (h *OrderHandler) UpdateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.orderService.UpdateOrder(&order, id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	slog.Info("Order updated", utils.PutGroup())
-	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"message":"updated successfully"})
+	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "updated successfully"})
 }
 
 func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +106,10 @@ func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.orderService.DeleteOrder(id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -105,9 +124,12 @@ func (h *OrderHandler) CloseOrder(w http.ResponseWriter, r *http.Request) {
 		utils.RespondWithError(w, http.StatusBadRequest, "Missing order ID")
 		return
 	}
-	
 
 	if err := h.orderService.CloseOrder(id); err != nil {
+		if errors.Is(err, aerrors.ErrNotExist) {
+			utils.RespondWithError(w, http.StatusNotFound, aerrors.ErrNotExist.Error())
+			return
+		}
 		utils.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

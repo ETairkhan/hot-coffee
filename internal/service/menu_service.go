@@ -1,20 +1,35 @@
 package service
 
 import (
+	"errors"
+
+	"ayzhunis/hot-coffee/helper"
 	"ayzhunis/hot-coffee/internal/dal"
 	"ayzhunis/hot-coffee/models"
-	"errors"
 )
 
 type MenuService struct {
 	MenuRepo *dal.MenuItemsRepository
+	IvenRepo *dal.InventoryRepository
 }
 
-func NewMenuService(repo *dal.MenuItemsRepository) *MenuService {
+func NewMenuService(repo *dal.MenuItemsRepository, iven *dal.InventoryRepository) *MenuService {
 	return &MenuService{MenuRepo: repo}
 }
 
 func (s *MenuService) CreateMenuItems(menu *models.MenuItem) error {
+	iventory, err := s.IvenRepo.GetAllInventory()
+	if err != nil {
+		return err
+	}
+	inve := make([]models.InventoryItem, len(*iventory))
+	for i, s := range *iventory {
+		inve[i] = *s
+	}
+	err = helper.CheckerForMenuItems(*menu, inve)
+	if err != nil {
+		return err
+	}
 	return s.MenuRepo.CreateMenuItems(menu)
 }
 

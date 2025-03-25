@@ -1,10 +1,12 @@
 package service
 
 import (
-	"ayzhunis/hot-coffee/internal/dal"
-	"ayzhunis/hot-coffee/models"
 	"errors"
 	"fmt"
+
+	"ayzhunis/hot-coffee/helper"
+	"ayzhunis/hot-coffee/internal/dal"
+	"ayzhunis/hot-coffee/models"
 )
 
 type OrderService struct {
@@ -24,6 +26,12 @@ func NewOrderService(repo *dal.OrderRepository, menuService *MenuService, invent
 func (s *OrderService) CreateOrder(order *models.Order) error {
 	// 1. Получаем все позиции меню
 	menuItems, err := s.MenuService.GetAllMenu()
+	if err != nil {
+		return err
+	}
+
+	// 1.5 Proverka ordera na validnation
+	err = helper.CheckForOrders(*order, *menuItems)
 	if err != nil {
 		return err
 	}

@@ -52,6 +52,7 @@ func IsContain[T models.Entity](id string, items *[]T) (T, bool) {
 
 func RespondWithError(w http.ResponseWriter, code int, message string) {
 	slog.Error(message)
+	slog.Warn("Responding with error", "code", code, "message", message)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
