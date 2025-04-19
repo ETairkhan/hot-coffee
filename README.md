@@ -30,10 +30,6 @@ Logging: Go's log/slog
 
 Architecture: Layered (Presentation, Business Logic, Data Access)
 ```go
-Architecture
-go
-Copy
-Edit
 hot-coffee/
 ├── cmd/
 │   └── main.go
@@ -63,6 +59,7 @@ hot-coffee/
 ```
 API Endpoints
 Orders
+```go
 POST /orders — Create a new order
 
 GET /orders — Retrieve all orders
@@ -74,8 +71,9 @@ PUT /orders/{id} — Update an order
 DELETE /orders/{id} — Delete an order
 
 POST /orders/{id}/close — Close an order
-
+```
 Menu Items
+```go
 POST /menu — Add a menu item
 
 GET /menu — Retrieve all menu items
@@ -85,8 +83,9 @@ GET /menu/{id} — Retrieve a menu item by ID
 PUT /menu/{id} — Update a menu item
 
 DELETE /menu/{id} — Delete a menu item
-
+```
 Inventory
+```go
 POST /inventory — Add an inventory item
 
 GET /inventory — Retrieve all inventory items
@@ -96,21 +95,22 @@ GET /inventory/{id} — Retrieve an inventory item by ID
 PUT /inventory/{id} — Update an inventory item
 
 DELETE /inventory/{id} — Delete an inventory item
-
+```
 Aggregations
+```go
 GET /reports/total-sales — Get total sales amount
 
 GET /reports/popular-items — Get popular menu items
-
+```
 Data Storage
 All application data is stored in structured JSON files located in the data/ directory:
-
+```go
 orders.json
 
 menu_items.json
 
 inventory.json
-
+```
 Data models include Order, MenuItem, and InventoryItem, each properly serialized and deserialized to JSON.
 
 Requirements
@@ -120,19 +120,17 @@ No external packages allowed (only Go standard library).
 
 Application must compile with:
 
-bash
-Copy
-Edit
+```go
 go build -o hot-coffee .
+```
 Proper error handling and HTTP status codes are mandatory.
 
 Server configuration options:
 
-bash
-Copy
-Edit
+```bash
 ./hot-coffee --port <PORT> --dir <DATA_DIRECTORY>
 ./hot-coffee --help
+```
 Error Handling
 400 Bad Request for invalid inputs
 
@@ -142,20 +140,15 @@ Error Handling
 
 All errors and significant events are logged using Go's log/slog package.
 
-Example:
-
-go
-Copy
-Edit
+```go
 slog.Info("Order created", "orderID", newOrder.ID)
 slog.Error("Failed to update inventory", err)
+```
 Example JSON Structures
 Order
 
-json
-Copy
-Edit
-{
+```json
+
   "order_id": "order123",
   "customer_name": "Alice Smith",
   "items": [
@@ -165,11 +158,10 @@ Edit
   "status": "open",
   "created_at": "2023-10-01T09:00:00Z"
 }
+```
 Menu Item
 
-json
-Copy
-Edit
+```json
 {
   "product_id": "latte",
   "name": "Caffe Latte",
@@ -180,17 +172,17 @@ Edit
     {"ingredient_id": "milk", "quantity": 200}
   ]
 }
+```
 Inventory Item
 
-json
-Copy
-Edit
+```json
 {
   "ingredient_id": "milk",
   "name": "Milk",
   "quantity": 5000,
   "unit": "ml"
 }
+```
 Guidelines
 Focus first on setting up inventory functionality across all three layers.
 
