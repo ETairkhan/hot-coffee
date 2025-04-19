@@ -29,7 +29,7 @@ Storage: Local JSON files (no databases)
 Logging: Go's log/slog
 
 Architecture: Layered (Presentation, Business Logic, Data Access)
-
+`
 Architecture
 go
 Copy
@@ -60,6 +60,7 @@ hot-coffee/
     ├── orders.json
     ├── menu_items.json
     └── inventory.json
+`
 API Endpoints
 Orders
 POST /orders — Create a new order
